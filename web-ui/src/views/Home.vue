@@ -101,16 +101,19 @@ export default {
 
 .main-content {
   display: flex;
-  gap: 2rem;
+  justify-content: center;
+  gap: 4rem;
+  padding: 0 3rem;
 }
 
 .preview-wrapper {
-  flex: 2;
+  width: 450px;
+  flex-shrink: 0;
 }
 
 .controls-wrapper {
-  flex: 1;
-  min-width: 380px;
+  width: 530px;
+  flex-shrink: 0;
 }
 
 .image-info {
