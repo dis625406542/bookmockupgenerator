@@ -27,6 +27,8 @@
       </div>
     </main>
 
+    <ImageCarousel />
+
     <ImageUploader 
       :visible.sync="showUploader"
       @image-cropped="handleImageCropped"
@@ -38,6 +40,7 @@
 import PreviewArea from '../components/PreviewArea.vue';
 import ControlPanel from '../components/ControlPanel.vue';
 import ImageUploader from '../components/ImageUploader.vue';
+import ImageCarousel from '../components/ImageCarousel.vue';
 
 export default {
   name: 'Home',
@@ -45,6 +48,7 @@ export default {
     PreviewArea,
     ControlPanel,
     ImageUploader,
+    ImageCarousel,
   },
   data() {
     return {
@@ -107,12 +111,12 @@ export default {
 }
 
 .preview-wrapper {
-  width: 450px;
+  width: 520px;
   flex-shrink: 0;
 }
 
 .controls-wrapper {
-  width: 530px;
+  width: 480px;
   flex-shrink: 0;
 }
 

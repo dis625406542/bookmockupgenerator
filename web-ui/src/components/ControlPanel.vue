@@ -80,8 +80,9 @@
   
   <style scoped>
   .control-panel {
-    width: 100%;
-  }
+  width: 100%;
+  max-width: 480px;
+}
   
   .clearfix:before,
   .clearfix:after {

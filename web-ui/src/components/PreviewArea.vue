@@ -27,7 +27,7 @@ export default {
 <style scoped>
 .preview-area {
   width: 100%;
-  aspect-ratio: 1 / 1; /* 保持正方形 */
+  min-height: 400px;
   background-color: #e0f7fa; /* 灵感来自截图的背景色 */
   border-radius: var(--border-radius);
   display: flex;
@@ -36,6 +36,7 @@ export default {
   padding: 2rem;
   box-sizing: border-box;
   overflow: hidden;
+  position: relative;
 }
 
 .scene {
@@ -43,12 +44,14 @@ export default {
 }
 
 .book {
-  width: 250px;
-  height: 350px;
+  width: 280px;
+  height: 380px;
   position: relative;
   transform-style: preserve-3d;
   transform: rotateY(-30deg) rotateX(10deg);
   transition: transform 0.5s ease;
+  max-width: 80%;
+  max-height: 80%;
 }
 
 .book:hover {
