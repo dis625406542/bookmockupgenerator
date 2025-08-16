@@ -20,6 +20,7 @@
     "axios": "0.24.0",
     "core-js": "3.19.1",
     "element-ui": "2.15.8",
+    "three": "^0.179.1",
     "vue": "2.6.12",
     "vue-cropper": "^0.6.5",
     "vue-router": "3.4.9"
