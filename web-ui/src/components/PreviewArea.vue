@@ -1,6 +1,34 @@
 <template>
   <div class="preview-area">
-    <canvas ref="canvasRef"></canvas>
+    <canvas ref="canvasRef" @click="handleCanvasClick"></canvas>
+    
+    <!-- 坐标选择器控制面板 -->
+    <div class="point-selector-panel" v-if="isSelectingPoints">
+      <div class="point-selector-header">
+        <h4>坐标选择器</h4>
+        <p>请按顺序点击书封面的四个角：</p>
+        <ul>
+          <li v-for="(name, index) in ['左上角', '右上角', '右下角', '左下角']" :key="index">
+            <span :class="{ 'current': index === selectedPointIndex, 'completed': index < selectedPointIndex }">
+              {{ index + 1 }}. {{ name }}
+            </span>
+          </li>
+        </ul>
+      </div>
+      <div class="point-selector-actions">
+        <el-button @click="cancelPointSelection" size="small">取消</el-button>
+        <el-button @click="finishPointSelection" type="primary" size="small" :disabled="selectedPointIndex < 4">
+          完成选择
+        </el-button>
+      </div>
+    </div>
+    
+    <!-- 坐标选择器启动按钮 -->
+    <div class="point-selector-trigger" v-if="!isSelectingPoints">
+      <el-button @click="startPointSelection" type="warning" size="small">
+        重新选择封面坐标
+      </el-button>
+    </div>
   </div>
 </template>
 
@@ -33,6 +61,10 @@ export default {
       },
       backgroundImage: null,
       coverImage: null,
+      // 添加坐标选择器相关状态
+      isSelectingPoints: false,
+      selectedPointIndex: 0,
+      tempDestPoints: [],
     };
   },
   watch: {
@@ -40,9 +72,20 @@ export default {
     // 当父组件传来新的图片URL时，重新渲染 canvas
     coverImageUrl: {
       immediate: true, // 立即执行一次
-      handler(newUrl) {
+      handler(newUrl, oldUrl) {
+        console.log('coverImageUrl变化:', { oldUrl, newUrl });
+        
         if (newUrl) {
+          console.log('有封面图片，渲染完整mockup');
           this.renderMockup();
+        } else if (oldUrl && !newUrl) {
+          // 如果之前有封面图片，现在没有了，重新渲染背景
+          console.log('封面图片被移除，重新渲染背景');
+          this.renderBackgroundOnly();
+        } else if (!oldUrl && !newUrl) {
+          // 如果之前和现在都没有封面图片，渲染背景
+          console.log('没有封面图片，渲染仅背景');
+          this.renderBackgroundOnly();
         }
       },
     },
@@ -131,6 +174,17 @@ export default {
         containerHeight: containerHeight,
         aspectRatio: aspectRatio
       });
+      
+      // 调试destPoints坐标
+      console.log('destPoints配置:', this.config.destPoints);
+      if (canvas.width > 0) {
+        const scale = canvas.width / this.config.width;
+        const scaledDestPoints = this.config.destPoints.map(p => ({ 
+          x: p.x * scale, 
+          y: p.y * scale 
+        }));
+        console.log('缩放后的destPoints:', scaledDestPoints);
+      }
     },
 
     async renderMockup() {
@@ -158,7 +212,7 @@ export default {
         if (this.coverImageUrl) {
           const coverImg = await this.loadImage(this.coverImageUrl);
           this.coverImage = coverImg;
-          console.log('封面图片加载成功');
+          console.log('封面图片加载成功，尺寸:', coverImg.width, 'x', coverImg.height);
         }
 
         // 清空画布
@@ -168,19 +222,25 @@ export default {
         const scale = canvas.width / this.config.width;
         console.log('缩放比例:', scale);
 
-        // 1. 绘制扭曲后的封面图片（如果有的话）
-        if (this.coverImage) {
-          this.drawTransformedImage(ctx, this.coverImage, scale);
-        }
+        // 1. 先绘制背景图，保持宽高比
+        const bgScale = Math.min(canvas.width / this.backgroundImage.width, canvas.height / this.backgroundImage.height);
+        const bgScaledWidth = this.backgroundImage.width * bgScale;
+        const bgScaledHeight = this.backgroundImage.height * bgScale;
+        const bgX = (canvas.width - bgScaledWidth) / 2;
+        const bgY = (canvas.height - bgScaledHeight) / 2;
+        
+        ctx.drawImage(this.backgroundImage, bgX, bgY, bgScaledWidth, bgScaledHeight);
+        console.log('背景图绘制完成');
 
-                 // 2. 绘制背景图，保持宽高比
-         const bgScale = Math.min(canvas.width / this.backgroundImage.width, canvas.height / this.backgroundImage.height);
-         const bgScaledWidth = this.backgroundImage.width * bgScale;
-         const bgScaledHeight = this.backgroundImage.height * bgScale;
-         const bgX = (canvas.width - bgScaledWidth) / 2;
-         const bgY = (canvas.height - bgScaledHeight) / 2;
-         
-         ctx.drawImage(this.backgroundImage, bgX, bgY, bgScaledWidth, bgScaledHeight);
+        // 2. 绘制扭曲后的封面图片（如果有的话）
+        if (this.coverImage) {
+          console.log('开始绘制封面图片到书模板上');
+          this.drawTransformedImage(ctx, this.coverImage, scale);
+          console.log('封面图片绘制完成');
+        }
+        
+        // 绘制坐标点（用于调试和坐标选择）
+        this.drawCoordinatePoints(ctx, scale, bgX, bgY);
         
         console.log('Mockup渲染完成');
       } catch (error) {
@@ -238,6 +298,9 @@ export default {
         const y = (canvas.height - scaledHeight) / 2;
         
         ctx.drawImage(bgImg, x, y, scaledWidth, scaledHeight);
+        
+        // 绘制坐标点（用于调试和坐标选择）
+        this.drawCoordinatePoints(ctx, scale, x, y);
         
         console.log('仅背景渲染完成，绘制参数:', {
           scale, scaledWidth, scaledHeight, x, y
@@ -313,8 +376,11 @@ export default {
         return;
       }
 
+      console.log('开始透视变换，图片尺寸:', image.width, 'x', image.height, '缩放比例:', scale);
+
       // 这个函数是实现透视变换的核心
       const dest = this.config.destPoints.map(p => ({ x: p.x * scale, y: p.y * scale }));
+      console.log('目标四边形坐标:', dest);
 
       const src = [
         { x: 0, y: 0 },
@@ -322,6 +388,7 @@ export default {
         { x: image.width, y: image.height },
         { x: 0, y: image.height },
       ];
+      console.log('源四边形坐标:', src);
 
       // 将目标四边形分割成两个三角形进行绘制
       // 第一个三角形：点0, 1, 2
@@ -336,6 +403,8 @@ export default {
         const src_tri = triangleIndices.map(idx => src[idx]);
         const dst_tri = triangleIndices.map(idx => dest[idx]);
 
+        console.log(`绘制第${i+1}个三角形:`, { src_tri, dst_tri });
+
         ctx.save();
         ctx.beginPath();
         ctx.moveTo(dst_tri[0].x, dst_tri[0].y);
@@ -346,10 +415,14 @@ export default {
 
         // 计算从源三角形到目标三角形的仿射变换矩阵
         const t = this.getTransform(src_tri, dst_tri);
+        console.log(`第${i+1}个三角形变换矩阵:`, t);
+        
         ctx.transform(t.a, t.b, t.c, t.d, t.e, t.f);
         ctx.drawImage(image, 0, 0);
         ctx.restore();
       }
+      
+      console.log('透视变换完成');
     },
 
     getTransform(src, dst) {
@@ -364,6 +437,105 @@ export default {
       };
       return t;
     },
+
+    // 坐标选择器相关方法
+    startPointSelection() {
+      this.isSelectingPoints = true;
+      this.selectedPointIndex = 0;
+      this.tempDestPoints = [...this.config.destPoints];
+      console.log('开始选择坐标点，请按顺序点击书封面的四个角');
+      console.log('当前选择第1个点（左上角）');
+    },
+
+    handleCanvasClick(event) {
+      if (!this.isSelectingPoints) return;
+
+      const canvas = this.$refs.canvasRef;
+      if (!canvas) return;
+
+      const rect = canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+
+      // 转换为原始图片坐标
+      const scale = this.config.width / canvas.width;
+      const originalX = Math.round(x * scale);
+      const originalY = Math.round(y * scale);
+
+      this.tempDestPoints[this.selectedPointIndex] = { x: originalX, y: originalY };
+      
+      console.log(`第${this.selectedPointIndex + 1}个点选择完成:`, { 
+        x: originalX, 
+        y: originalY,
+        displayX: x,
+        displayY: y
+      });
+
+      this.selectedPointIndex++;
+      
+      if (this.selectedPointIndex >= 4) {
+        this.finishPointSelection();
+      } else {
+        const pointNames = ['左上角', '右上角', '右下角', '左下角'];
+        console.log(`请选择第${this.selectedPointIndex + 1}个点（${pointNames[this.selectedPointIndex]}）`);
+      }
+    },
+
+    finishPointSelection() {
+      this.isSelectingPoints = false;
+      this.config.destPoints = [...this.tempDestPoints];
+      console.log('坐标选择完成！新的destPoints:', this.config.destPoints);
+      
+      // 重新渲染
+      if (this.coverImageUrl) {
+        this.renderMockup();
+      } else {
+        this.renderBackgroundOnly();
+      }
+    },
+
+    cancelPointSelection() {
+      this.isSelectingPoints = false;
+      this.selectedPointIndex = 0;
+      this.tempDestPoints = [];
+      console.log('坐标选择已取消');
+    },
+
+    drawCoordinatePoints(ctx, scale, x, y) {
+      // 绘制坐标点（用于调试和坐标选择）
+      const pointRadius = 5;
+      const pointColor = '#ff0000'; // 红色
+
+      // 左上角
+      ctx.beginPath();
+      ctx.arc(x + this.config.destPoints[0].x * scale, y + this.config.destPoints[0].y * scale, pointRadius, 0, Math.PI * 2);
+      ctx.fillStyle = pointColor;
+      ctx.fill();
+      ctx.closePath();
+
+      // 右上角
+      ctx.beginPath();
+      ctx.arc(x + this.config.destPoints[1].x * scale, y + this.config.destPoints[1].y * scale, pointRadius, 0, Math.PI * 2);
+      ctx.fillStyle = pointColor;
+      ctx.fill();
+      ctx.closePath();
+
+      // 右下角
+      ctx.beginPath();
+      ctx.arc(x + this.config.destPoints[2].x * scale, y + this.config.destPoints[2].y * scale, pointRadius, 0, Math.PI * 2);
+      ctx.fillStyle = pointColor;
+      ctx.fill();
+      ctx.closePath();
+
+      // 左下角
+      ctx.beginPath();
+      ctx.arc(x + this.config.destPoints[3].x * scale, y + this.config.destPoints[3].y * scale, pointRadius, 0, Math.PI * 2);
+      ctx.fillStyle = pointColor;
+      ctx.fill();
+      ctx.closePath();
+
+      console.log('坐标点绘制完成');
+    }
   },
 };
 </script>
@@ -390,5 +562,68 @@ canvas {
   object-fit: contain;
   border: 1px solid #ccc;
   background-color: white;
+  cursor: pointer;
+}
+
+.point-selector-panel {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: white;
+  border: 2px solid #409eff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  max-width: 300px;
+}
+
+.point-selector-header h4 {
+  margin: 0 0 10px 0;
+  color: #409eff;
+}
+
+.point-selector-header p {
+  margin: 0 0 15px 0;
+  font-size: 14px;
+}
+
+.point-selector-header ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+}
+
+.point-selector-header li {
+  margin: 8px 0;
+  padding: 5px 10px;
+  border-radius: 4px;
+  background: #f5f7fa;
+}
+
+.point-selector-header li span.current {
+  color: #409eff;
+  font-weight: bold;
+}
+
+.point-selector-header li span.completed {
+  color: #67c23a;
+}
+
+.point-selector-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.point-selector-trigger {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+}
+
+.point-selector-trigger .el-button {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 </style>
