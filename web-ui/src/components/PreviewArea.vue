@@ -1,40 +1,12 @@
 <template>
   <div class="preview-area">
-    <canvas ref="canvasRef" @click="handleCanvasClick"></canvas>
-    
-    <!-- 坐标选择器控制面板 -->
-    <div class="point-selector-panel" v-if="isSelectingPoints">
-      <div class="point-selector-header">
-        <h4>坐标选择器</h4>
-        <p>请按顺序点击书封面的四个角：</p>
-        <ul>
-          <li v-for="(name, index) in ['左上角', '右上角', '右下角', '左下角']" :key="index">
-            <span :class="{ 'current': index === selectedPointIndex, 'completed': index < selectedPointIndex }">
-              {{ index + 1 }}. {{ name }}
-            </span>
-          </li>
-        </ul>
-      </div>
-      <div class="point-selector-actions">
-        <el-button @click="cancelPointSelection" size="small">取消</el-button>
-        <el-button @click="finishPointSelection" type="primary" size="small" :disabled="selectedPointIndex < 4">
-          完成选择
-        </el-button>
-      </div>
-    </div>
-    
-    <!-- 坐标选择器启动按钮 -->
-    <div class="point-selector-trigger" v-if="!isSelectingPoints">
-      <el-button @click="startPointSelection" type="warning" size="small">
-        重新选择封面坐标
-      </el-button>
-    </div>
+    <canvas ref="canvasRef"></canvas>
   </div>
 </template>
 
 <script>
 // 引入我们的背景图片
-import bookBackground from '@/assets/images/book-background.jpg';
+import bookBackground from '@/assets/images/book-background1.jpg';
 
 export default {
   name: 'PreviewArea',
@@ -61,10 +33,6 @@ export default {
       },
       backgroundImage: null,
       coverImage: null,
-      // 添加坐标选择器相关状态
-      isSelectingPoints: false,
-      selectedPointIndex: 0,
-      tempDestPoints: [],
     };
   },
   watch: {
@@ -222,7 +190,7 @@ export default {
         const scale = canvas.width / this.config.width;
         console.log('缩放比例:', scale);
 
-        // 1. 先绘制背景图，保持宽高比
+        // 1. 先绘制背景图，保持宽高比，居中显示
         const bgScale = Math.min(canvas.width / this.backgroundImage.width, canvas.height / this.backgroundImage.height);
         const bgScaledWidth = this.backgroundImage.width * bgScale;
         const bgScaledHeight = this.backgroundImage.height * bgScale;
@@ -265,21 +233,6 @@ export default {
 
       console.log('开始渲染仅背景，Canvas尺寸:', canvas.width, 'x', canvas.height);
 
-      // 先绘制一个简单的测试图案，确保Canvas工作正常
-      ctx.fillStyle = '#e0e0e0';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
-      // 绘制一个简单的边框
-      ctx.strokeStyle = '#999';
-      ctx.lineWidth = 2;
-      ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
-      
-      // 绘制一些测试文字
-      ctx.fillStyle = '#666';
-      ctx.font = '20px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText('Canvas测试 - 正在加载背景图片...', canvas.width / 2, canvas.height / 2);
-
       try {
         // 只加载背景图片
         const bgImg = await this.loadImage(bookBackground);
@@ -290,7 +243,7 @@ export default {
         // 清空画布
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-        // 绘制背景图，保持宽高比
+        // 绘制背景图，保持宽高比，居中显示
         const scale = Math.min(canvas.width / bgImg.width, canvas.height / bgImg.height);
         const scaledWidth = bgImg.width * scale;
         const scaledHeight = bgImg.height * scale;
@@ -433,72 +386,9 @@ export default {
         c: (dst[1].x * src[2].x - dst[2].x * src[1].x - dst[0].x * src[2].x + dst[2].x * src[0].x + dst[0].x * src[1].x - dst[1].x * src[0].x) / (src[1].y * src[2].x - src[2].y * src[1].x - src[0].y * src[2].x + src[2].y * src[0].x + src[0].y * src[1].x - src[1].y * src[0].x),
         d: (dst[1].y * src[2].x - dst[2].y * src[1].x - dst[0].y * src[2].x + dst[2].y * src[0].x + dst[0].y * src[1].x - dst[1].y * src[0].x) / (src[1].y * src[2].x - src[2].y * src[1].x - src[0].y * src[2].x + src[2].y * src[0].x + src[0].y * src[1].x - src[1].y * src[0].x),
         e: dst[0].x - (dst[1].x * src[2].y - dst[2].x * src[1].y - dst[0].x * src[2].y + dst[2].x * src[0].y + dst[0].x * src[1].y - dst[1].x * src[0].y) * src[0].x / (src[1].x * src[2].y - src[2].x * src[1].y - src[0].x * src[2].y + src[2].x * src[0].y + src[0].x * src[1].y - src[1].x * src[0].y) - (dst[1].x * src[2].x - dst[2].x * src[1].x - dst[0].x * src[2].x + dst[2].x * src[0].x + dst[0].x * src[1].x - dst[1].x * src[0].x) * src[0].y / (src[1].y * src[2].x - src[2].y * src[1].x - src[0].y * src[2].x + src[2].y * src[0].x + src[0].y * src[1].x - src[1].y * src[0].x),
-        f: dst[0].y - (dst[1].y * src[2].y - dst[2].y * src[1].y - dst[0].y * src[2].y + dst[2].y * src[0].y + dst[0].y * src[1].y - dst[1].y * src[0].y) * src[0].x / (src[1].x * src[2].y - src[2].x * src[1].y - src[0].x * src[2].y + src[2].x * src[0].y + src[0].x * src[1].y - src[1].x * src[0].y) - (dst[1].y * src[2].x - dst[2].y * src[1].x - dst[0].y * src[2].x + dst[2].y * src[0].x + dst[0].y * src[1].x - dst[1].y * src[0].x) * src[0].y / (src[1].y * src[2].x - src[2].y * src[1].x - src[0].y * src[2].x + src[2].y * src[0].x + src[0].y * src[1].x - src[1].y * src[0].x),
+        f: dst[0].y - (dst[1].y * src[2].y - dst[2].y * src[1].y - dst[0].y * src[2].y + dst[2].y * src[0].y + dst[0].y * src[1].y - dst[1].y * src[0].y) * src[0].x / (src[1].x * src[2].y - src[2].x * src[1].y - src[0].x * src[2].y + src[2].x * src[0].y + src[0].x * src[1].y - src[1].x * src[0].y) - (dst[1].x * src[2].x - dst[2].y * src[1].x - dst[0].x * src[2].x + dst[2].y * src[0].x + dst[0].y * src[1].x - dst[1].y * src[0].x) * src[0].y / (src[1].y * src[2].x - src[2].y * src[1].x - src[0].y * src[2].x + src[2].y * src[0].x + src[0].y * src[1].x - src[1].y * src[0].x),
       };
       return t;
-    },
-
-    // 坐标选择器相关方法
-    startPointSelection() {
-      this.isSelectingPoints = true;
-      this.selectedPointIndex = 0;
-      this.tempDestPoints = [...this.config.destPoints];
-      console.log('开始选择坐标点，请按顺序点击书封面的四个角');
-      console.log('当前选择第1个点（左上角）');
-    },
-
-    handleCanvasClick(event) {
-      if (!this.isSelectingPoints) return;
-
-      const canvas = this.$refs.canvasRef;
-      if (!canvas) return;
-
-      const rect = canvas.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
-
-      // 转换为原始图片坐标
-      const scale = this.config.width / canvas.width;
-      const originalX = Math.round(x * scale);
-      const originalY = Math.round(y * scale);
-
-      this.tempDestPoints[this.selectedPointIndex] = { x: originalX, y: originalY };
-      
-      console.log(`第${this.selectedPointIndex + 1}个点选择完成:`, { 
-        x: originalX, 
-        y: originalY,
-        displayX: x,
-        displayY: y
-      });
-
-      this.selectedPointIndex++;
-      
-      if (this.selectedPointIndex >= 4) {
-        this.finishPointSelection();
-      } else {
-        const pointNames = ['左上角', '右上角', '右下角', '左下角'];
-        console.log(`请选择第${this.selectedPointIndex + 1}个点（${pointNames[this.selectedPointIndex]}）`);
-      }
-    },
-
-    finishPointSelection() {
-      this.isSelectingPoints = false;
-      this.config.destPoints = [...this.tempDestPoints];
-      console.log('坐标选择完成！新的destPoints:', this.config.destPoints);
-      
-      // 重新渲染
-      if (this.coverImageUrl) {
-        this.renderMockup();
-      } else {
-        this.renderBackgroundOnly();
-      }
-    },
-
-    cancelPointSelection() {
-      this.isSelectingPoints = false;
-      this.selectedPointIndex = 0;
-      this.tempDestPoints = [];
-      console.log('坐标选择已取消');
     },
 
     drawCoordinatePoints(ctx, scale, x, y) {
@@ -552,7 +442,6 @@ export default {
   align-items: center;
   justify-content: center;
   position: relative;
-  border: 2px solid #ddd;
 }
 
 canvas {
@@ -560,70 +449,6 @@ canvas {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
-  border: 1px solid #ccc;
   background-color: white;
-  cursor: pointer;
-}
-
-.point-selector-panel {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: white;
-  border: 2px solid #409eff;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
-  max-width: 300px;
-}
-
-.point-selector-header h4 {
-  margin: 0 0 10px 0;
-  color: #409eff;
-}
-
-.point-selector-header p {
-  margin: 0 0 15px 0;
-  font-size: 14px;
-}
-
-.point-selector-header ul {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 20px 0;
-}
-
-.point-selector-header li {
-  margin: 8px 0;
-  padding: 5px 10px;
-  border-radius: 4px;
-  background: #f5f7fa;
-}
-
-.point-selector-header li span.current {
-  color: #409eff;
-  font-weight: bold;
-}
-
-.point-selector-header li span.completed {
-  color: #67c23a;
-}
-
-.point-selector-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-}
-
-.point-selector-trigger {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  z-index: 1000;
-}
-
-.point-selector-trigger .el-button {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 </style>
