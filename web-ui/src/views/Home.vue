@@ -55,7 +55,7 @@ export default {
   },
   data() {
     return {
-      coverImageUrl: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80',
+      coverImageUrl: require('@/assets/images/book-backImage.png'),
       showUploader: false,
       currentEditingType: 'cover',
     };
