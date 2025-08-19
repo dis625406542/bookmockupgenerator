@@ -333,7 +333,9 @@ export default {
       console.log('开始透视变换，图片尺寸:', image.width, 'x', image.height, '缩放比例:', scale);
 
       // 这个函数是实现透视变换的核心
-      const dest = this.config.destPoints.map(p => ({ x: p.x * scale, y: p.y * scale }));
+      // 添加向右偏移量，移动封面图片位置
+      const offsetX = 100; // 向右偏移100px
+      const dest = this.config.destPoints.map(p => ({ x: (p.x + offsetX) * scale, y: p.y * scale }));
       console.log('目标四边形坐标:', dest);
 
       const src = [
