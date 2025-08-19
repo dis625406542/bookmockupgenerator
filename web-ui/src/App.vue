@@ -1,21 +1,21 @@
 <template>
   <div id="app">
     <!-- 如果您使用Vue Router，这里是路由出口 -->
-    <!-- <router-view /> -->
+    <router-view />
     
     <!-- 如果暂时不用路由，直接使用Home组件 -->
-    <Home />
+    <!-- <Home /> -->
   </div>
 </template>
 
 <script>
-import Home from './views/Home.vue';
+// import Home from './views/Home.vue';
 
 export default {
   name: 'App',
-  components: {
-    Home
-  }
+  // components: {
+  //   Home
+  // }
 };
 </script>
 

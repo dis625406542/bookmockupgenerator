@@ -3,6 +3,9 @@
     <header class="main-header">
       <div class="logo">BookMockup</div>
       <div class="actions">
+        <router-link to="/coordinate-picker" class="nav-link">
+          <el-button type="info" round>坐标选择器</el-button>
+        </router-link>
         <el-button type="primary" round>Upgrade</el-button>
         <el-avatar icon="el-icon-user-solid" style="margin-left: 15px;"></el-avatar>
       </div>
