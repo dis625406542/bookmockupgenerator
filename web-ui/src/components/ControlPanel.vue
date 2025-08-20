@@ -38,6 +38,9 @@
         <el-button @click="editCover" class="upload-action-btn" type="danger" icon="el-icon-picture-outline">
           Add image/design
         </el-button>
+        <el-button @click="testHandMask" class="test-btn" type="info" size="small" style="margin-top: 10px;">
+          Test Hand Mask
+        </el-button>
       </div>
   
       <div class="image-control">
@@ -73,6 +76,10 @@
       editSpine() {
         // 向父组件发送事件，请求上传书脊（当前禁用）
         this.$emit('request-upload', 'spine');
+      },
+      testHandMask() {
+        // 向父组件发送事件，请求测试手部遮罩
+        this.$emit('test-hand-mask');
       },
     },
   };

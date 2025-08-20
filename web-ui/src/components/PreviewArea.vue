@@ -40,22 +40,25 @@ export default {
     // 监听 coverImageUrl prop 的变化
     // 当父组件传来新的图片URL时，重新渲染 canvas
     coverImageUrl: {
-      immediate: true, // 立即执行一次
+      immediate: false, // 改为false，避免在DOM未准备好时执行
       handler(newUrl, oldUrl) {
         console.log('coverImageUrl变化:', { oldUrl, newUrl });
         
-        if (newUrl) {
-          console.log('有封面图片，渲染完整mockup');
-          this.renderMockup();
-        } else if (oldUrl && !newUrl) {
-          // 如果之前有封面图片，现在没有了，重新渲染背景
-          console.log('封面图片被移除，重新渲染背景');
-          this.renderBackgroundOnly();
-        } else if (!oldUrl && !newUrl) {
-          // 如果之前和现在都没有封面图片，渲染背景
-          console.log('没有封面图片，渲染仅背景');
-          this.renderBackgroundOnly();
-        }
+        // 确保Canvas已经初始化后再执行渲染
+        this.$nextTick(() => {
+          if (newUrl) {
+            console.log('有封面图片，渲染完整mockup');
+            this.renderMockup();
+          } else if (oldUrl && !newUrl) {
+            // 如果之前有封面图片，现在没有了，重新渲染背景
+            console.log('封面图片被移除，重新渲染背景');
+            this.renderBackgroundOnly();
+          } else if (!oldUrl && !newUrl) {
+            // 如果之前和现在都没有封面图片，渲染背景
+            console.log('没有封面图片，渲染仅背景');
+            this.renderBackgroundOnly();
+          }
+        });
       },
     },
   },
@@ -65,15 +68,26 @@ export default {
     // 延迟初始化，确保DOM完全渲染
     this.$nextTick(() => {
       console.log('DOM已渲染完成，开始初始化Canvas');
-      this.initCanvas();
+      const initSuccess = this.initCanvas();
       
-      // 如果没有coverImageUrl，也要渲染背景
-      if (!this.coverImageUrl) {
-        console.log('没有封面图片，渲染仅背景');
-        this.renderBackgroundOnly();
+      if (initSuccess) {
+        // 等待Canvas初始化完成后再进行渲染
+        this.$nextTick(() => {
+          // 如果没有coverImageUrl，也要渲染背景
+          if (!this.coverImageUrl) {
+            console.log('没有封面图片，渲染仅背景');
+            this.renderBackgroundOnly();
+          } else {
+            console.log('有封面图片，渲染完整mockup');
+            this.renderMockup();
+          }
+        });
       } else {
-        console.log('有封面图片，渲染完整mockup');
-        this.renderMockup();
+        console.error('Canvas初始化失败，延迟重试...');
+        // 延迟重试
+        setTimeout(() => {
+          this.initCanvas();
+        }, 100);
       }
     });
 
@@ -101,13 +115,13 @@ export default {
       const canvas = this.$refs.canvasRef;
       if (!canvas) {
         console.error('Canvas元素未找到');
-        return;
+        return false; // 返回false表示初始化失败
       }
       
       const container = canvas.parentElement;
       if (!container) {
         console.error('Canvas容器未找到');
-        return;
+        return false; // 返回false表示初始化失败
       }
       
       // 获取容器的实际尺寸
@@ -154,12 +168,20 @@ export default {
         }));
         console.log('缩放后的destPoints:', scaledDestPoints);
       }
+      
+      return true; // 返回true表示初始化成功
     },
 
     async renderMockup() {
       const canvas = this.$refs.canvasRef;
       if (!canvas) {
-        console.error('renderMockup: Canvas未找到');
+        console.error('renderMockup: Canvas未找到，等待Canvas初始化...');
+        // 等待Canvas初始化完成后再重试
+        this.$nextTick(() => {
+          if (this.$refs.canvasRef) {
+            this.renderMockup();
+          }
+        });
         return;
       }
       
@@ -222,7 +244,13 @@ export default {
     async renderBackgroundOnly() {
       const canvas = this.$refs.canvasRef;
       if (!canvas) {
-        console.error('renderBackgroundOnly: Canvas未找到');
+        console.error('renderBackgroundOnly: Canvas未找到，等待Canvas初始化...');
+        // 等待Canvas初始化完成后再重试
+        this.$nextTick(() => {
+          if (this.$refs.canvasRef) {
+            this.renderBackgroundOnly();
+          }
+        });
         return;
       }
       

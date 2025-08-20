@@ -26,7 +26,7 @@
       </div>
       
       <div class="controls-wrapper">
-        <ControlPanel @request-upload="handleRequestUpload" />
+        <ControlPanel @request-upload="handleRequestUpload" @test-hand-mask="testHandMask" />
       </div>
     </main>
 
@@ -44,6 +44,7 @@ import PreviewArea from '../components/PreviewArea.vue';
 import ControlPanel from '../components/ControlPanel.vue';
 import ImageUploader from '../components/ImageUploader.vue';
 import ImageCarousel from '../components/ImageCarousel.vue';
+import { mergeUserImageWithHandMask, testHandMaskLoading } from '../utils/imageProcessor';
 
 export default {
   name: 'Home',
@@ -66,11 +67,52 @@ export default {
       this.showUploader = true;
     },
 
-    handleImageCropped(croppedImage) {
+    async handleImageCropped(croppedImage) {
       if (this.currentEditingType === 'cover') {
-        this.coverImageUrl = croppedImage;
+        try {
+          // 应用手部覆盖算法，将用户图片与手部遮罩合并
+          const mergedImageUrl = await mergeUserImageWithHandMask(croppedImage);
+          
+          // 更新封面图片为合并后的图片
+          this.coverImageUrl = mergedImageUrl;
+          
+        } catch (error) {
+          console.error('手部覆盖效果应用失败:', error);
+          
+          // 显示错误消息
+          this.$message({
+            message: `手部覆盖效果应用失败: ${error.message}`,
+            type: 'error',
+            duration: 5000
+          });
+          
+          // 降级：直接使用裁剪后的图片
+          this.coverImageUrl = croppedImage;
+        }
       }
       this.showUploader = false;
+    },
+    
+    async testHandMask() {
+      try {
+        console.log('开始测试手部遮罩加载...');
+        const result = await testHandMaskLoading();
+        console.log('手部遮罩测试成功:', result);
+        
+        this.$message({
+          message: `手部遮罩测试成功！检测到 ${result.nonWhitePixels} 个非白色像素`,
+          type: 'success',
+          duration: 5000
+        });
+      } catch (error) {
+        console.error('手部遮罩测试失败:', error);
+        
+        this.$message({
+          message: `手部遮罩测试失败: ${error.message}`,
+          type: 'error',
+          duration: 5000
+        });
+      }
     },
   },
 };
