@@ -55,7 +55,7 @@ export default {
   },
   data() {
     return {
-      coverImageUrl: require('@/assets/images/book-backImage.png'),
+      coverImageUrl: require('@/assets/images/book-with-hands-fixed.png'),
       showUploader: false,
       currentEditingType: 'cover',
     };
