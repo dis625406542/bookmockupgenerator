@@ -13,7 +13,7 @@
 
     <main class="main-content">
       <div class="preview-wrapper">
-        <PreviewArea :cover-image-url="coverImageUrl" />
+        <PreviewArea ref="previewArea" :cover-image-url="coverImageUrl" />
         <div class="image-info">
           <p><strong>专业的书模型生成器</strong> 支持动态封面展示，完美适合作者和设计师预览封面艺术效果</p>
           <div class="tags">
@@ -27,6 +27,10 @@
       
       <div class="controls-wrapper">
         <ControlPanel @request-upload="handleRequestUpload" @test-hand-mask="testHandMask" />
+        <div style="margin-top: 1rem;">
+          <el-button type="warning" @click="resetToBackground">显示纯背景</el-button>
+          <el-button type="primary" @click="forceBackgroundRender">测试固定图片渲染</el-button>
+        </div>
       </div>
     </main>
 
@@ -56,7 +60,7 @@ export default {
   },
   data() {
     return {
-      coverImageUrl: require('@/assets/images/book-with-hands-fixed.png'),
+      coverImageUrl: null, // 初始为null，显示背景图片
       showUploader: false,
       currentEditingType: 'cover',
     };
@@ -70,11 +74,18 @@ export default {
     async handleImageCropped(croppedImage) {
       if (this.currentEditingType === 'cover') {
         try {
-          // 应用手部覆盖算法，将用户图片与手部遮罩合并
+          // 使用手部覆盖算法处理图片
+          console.log('应用手部覆盖效果...');
           const mergedImageUrl = await mergeUserImageWithHandMask(croppedImage);
           
-          // 更新封面图片为合并后的图片
+          // 更新封面图片
           this.coverImageUrl = mergedImageUrl;
+          
+          this.$message({
+            message: '封面图片处理成功！',
+            type: 'success',
+            duration: 3000
+          });
           
         } catch (error) {
           console.error('手部覆盖效果应用失败:', error);
@@ -113,6 +124,42 @@ export default {
           duration: 5000
         });
       }
+    },
+
+
+
+    resetToBackground() {
+      console.log('重置为背景图片...');
+      console.log('当前coverImageUrl:', this.coverImageUrl);
+      this.coverImageUrl = null;
+      console.log('重置后coverImageUrl:', this.coverImageUrl);
+      
+      // 强制触发重新渲染
+      this.$nextTick(() => {
+        if (this.$refs.previewArea && this.$refs.previewArea.forceRerender) {
+          this.$refs.previewArea.forceRerender();
+        }
+      });
+      
+      this.$message({
+        message: '已重置为背景图片',
+        type: 'info',
+        duration: 3000
+      });
+    },
+
+    forceBackgroundRender() {
+      console.log('强制背景渲染...');
+      console.log('将book-with-hands-fixed.png渲染到book-background1.jpg背景上...');
+      
+      // 设置固定图片作为封面，让它渲染到背景上
+      this.coverImageUrl = require('@/assets/images/book-with-hands-fixed.png');
+      
+      this.$message({
+        message: '已将固定图片渲染到背景上',
+        type: 'success',
+        duration: 3000
+      });
     },
   },
 };
