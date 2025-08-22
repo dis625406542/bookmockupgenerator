@@ -6,17 +6,17 @@
 优化版本：减少锯齿，提高平滑度
 """
 
-from PIL import Image, ImageFilter
+from PIL import Image, ImageFilter, ImageEnhance
 import numpy as np
 import os
 
 def merge_user_image_with_hand_mask():
     """将用户上传的图片与手部遮罩合并"""
     
-    # 图片路径
-    user_image_path = "src/assets/images/user-book-with-hands-1755649522406.png"
+    # 图片路径 - 修改为处理dog.png和book-mask1.png
+    user_image_path = "src/assets/images/dog.png"
     hand_mask_path = "src/assets/images/book-mask1.png"
-    output_path = "src/assets/images/test-merged-result-smooth.png"
+    output_path = "src/assets/images/dog-merged-with-mask-smooth.png"
     
     try:
         # 检查文件是否存在
@@ -28,7 +28,7 @@ def merge_user_image_with_hand_mask():
             print(f"错误：手部遮罩不存在: {hand_mask_path}")
             return
         
-        print(f"开始处理图片合并（优化版本）...")
+        print(f"开始处理图片合并（边缘平滑优化版本）...")
         print(f"用户图片: {user_image_path}")
         print(f"手部遮罩: {hand_mask_path}")
         
@@ -39,23 +39,38 @@ def merge_user_image_with_hand_mask():
         print(f"用户图片尺寸: {user_image.size}")
         print(f"手部遮罩尺寸: {hand_mask.size}")
         
-        # 优化重采样：使用更高质量的方法
-        # 先放大到2倍，再缩小到目标尺寸，减少锯齿
-        target_size = user_image.size
-        intermediate_size = (target_size[0] * 2, target_size[1] * 2)
+        # 确保两张图片尺寸一致
+        if user_image.size != hand_mask.size:
+            print(f"调整手部遮罩尺寸以匹配用户图片...")
+            # 使用高质量重采样，先放大再缩小以减少锯齿
+            target_size = user_image.size
+            intermediate_size = (target_size[0] * 2, target_size[1] * 2)
+            
+            print(f"中间尺寸: {intermediate_size}")
+            
+            # 先放大到中间尺寸，使用高质量重采样
+            hand_mask_large = hand_mask.resize(intermediate_size, Image.Resampling.LANCZOS)
+            
+            # 再缩小到目标尺寸，使用高质量重采样
+            hand_mask = hand_mask_large.resize(target_size, Image.Resampling.LANCZOS)
+            
+            print(f"调整后手部遮罩尺寸: {hand_mask.size}")
         
-        print(f"中间尺寸: {intermediate_size}")
+        # 边缘平滑处理
+        print("开始边缘平滑处理...")
         
-        # 先放大到中间尺寸，使用高质量重采样
-        hand_mask_large = hand_mask.resize(intermediate_size, Image.Resampling.LANCZOS)
+        # 1. 轻微高斯模糊，软化边缘
+        hand_mask_smooth = hand_mask.filter(ImageFilter.GaussianBlur(radius=1.0))
+        print("✓ 应用高斯模糊 (radius=1.0)")
         
-        # 再缩小到目标尺寸，使用高质量重采样
-        hand_mask_resized = hand_mask_large.resize(target_size, Image.Resampling.LANCZOS)
+        # 2. 使用中值滤波进一步平滑边缘
+        hand_mask_smooth = hand_mask_smooth.filter(ImageFilter.MedianFilter(size=3))
+        print("✓ 应用中值滤波 (size=3)")
         
-        # 应用轻微的高斯模糊来平滑边缘
-        hand_mask_smooth = hand_mask_resized.filter(ImageFilter.GaussianBlur(radius=0.5))
-        
-        print(f"手部遮罩调整后尺寸: {hand_mask_smooth.size}")
+        # 3. 轻微锐化，保持细节
+        enhancer = ImageEnhance.Sharpness(hand_mask_smooth)
+        hand_mask_smooth = enhancer.enhance(1.2)
+        print("✓ 应用轻微锐化 (1.2x)")
         
         # 转换为numpy数组进行处理
         user_array = np.array(user_image)
@@ -105,8 +120,11 @@ def merge_user_image_with_hand_mask():
         # 转换回PIL图像
         result_image = Image.fromarray(result_array)
         
-        # 可选：对最终结果应用轻微平滑
-        # result_image = result_image.filter(ImageFilter.GaussianBlur(radius=0.3))
+        # 最终边缘平滑处理
+        print("应用最终边缘平滑...")
+        # 对整个结果图像应用轻微的高斯模糊，进一步平滑边缘
+        result_image = result_image.filter(ImageFilter.GaussianBlur(radius=0.5))
+        print("✓ 最终高斯模糊 (radius=0.5)")
         
         # 保存结果
         result_image.save(output_path, 'PNG', optimize=True, quality=95)
@@ -118,7 +136,7 @@ def merge_user_image_with_hand_mask():
         print(f"- 手部遮罩: {hand_mask_path}")
         print(f"- 输出结果: {output_path}")
         print(f"- 手部区域像素数: {np.sum(hand_regions)}")
-        print(f"- 优化措施: 2倍中间尺寸重采样 + 轻微高斯模糊")
+        print(f"- 边缘平滑优化: 2倍重采样 + 高斯模糊 + 中值滤波 + 锐化 + 最终平滑")
         
     except Exception as e:
         print(f"处理失败: {str(e)}")
