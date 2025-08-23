@@ -579,11 +579,11 @@ export default {
       ctx.closePath();
       console.log('四边形路径绘制完成');
       
-      // 调试：路径轮廓已注释掉（去掉红色圈）
-      // ctx.strokeStyle = 'red';
-      // ctx.lineWidth = 2;
-      // ctx.stroke();
-      console.log('路径轮廓绘制已跳过（去掉红色圈）');
+      // 调试：绘制路径轮廓
+      ctx.strokeStyle = 'red';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      console.log('路径轮廓绘制完成');
       
       // 设置裁剪区域为四边形
       ctx.clip();
