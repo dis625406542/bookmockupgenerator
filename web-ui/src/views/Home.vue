@@ -1,73 +1,80 @@
 <template>
   <div class="mockup-tool-container">
-    <!-- 新增的标题栏组件 -->
-    <Header />
-    <PageHeader title="Book Mockup Generator Tool" />
-
     <div class="unified-content-container">
-      <!-- 渲染结果 (移到左边) -->
-      <div class="result-panel">
-        <div class="panel-header">
-          <h2 class="panel-title">渲染效果</h2>
-        </div>
-        <div ref="canvasContainer" class="canvas-container">
-          <canvas ref="mockupCanvas"></canvas>
-        </div>
+      <!-- 标题区域 -->
+      <div class="header-section">
+        <Header />
+        <PageHeader title="Book Mockup Generator Tool" />
       </div>
 
-      <!-- 垂直分割线 -->
-      <div class="vertical-divider"></div>
 
-      <!-- 控制面板 (移到右边) -->
-      <div class="control-panel">
-        <div class="panel-header">
-          <h2 class="panel-title">控制面板</h2>
+
+      <!-- 功能区域 -->
+      <div class="function-section">
+        <!-- 渲染结果 (移到左边) -->
+        <div class="result-panel">
+          <div class="panel-header">
+            <h2 class="panel-title">渲染效果</h2>
+          </div>
+          <div ref="canvasContainer" class="canvas-container">
+            <canvas ref="mockupCanvas"></canvas>
+          </div>
         </div>
 
-        <div class="upload-section">
-          <label class="upload-label">
-            1. 上传封面图片 (例如：小狗图片)
-          </label>
-          <el-upload
-            class="image-uploader"
-            action="#"
-            :auto-upload="false"
-            :show-file-list="false"
-            :on-change="handleImageUpload"
-            accept="image/*"
+        <!-- 垂直分割线 -->
+        <div class="vertical-divider"></div>
+
+        <!-- 控制面板 (移到右边) -->
+        <div class="control-panel">
+          <div class="panel-header">
+            <h2 class="panel-title">控制面板</h2>
+          </div>
+
+          <div class="upload-section">
+            <label class="upload-label">
+              1. 上传封面图片 (例如：小狗图片)
+            </label>
+            <el-upload
+              class="image-uploader"
+              action="#"
+              :auto-upload="false"
+              :show-file-list="false"
+              :on-change="handleImageUpload"
+              accept="image/*"
+            >
+              <el-button size="small" type="primary">选择图片</el-button>
+            </el-upload>
+            <img
+              ref="previewImage"
+              class="preview-image"
+              alt="上传图片预览"
+            />
+          </div>
+
+          <div class="render-section">
+            <el-button
+              type="primary"
+              @click="handleRender"
+              :loading="isLoading"
+              :disabled="!userImage"
+              class="render-button"
+            >
+              {{ isLoading ? '正在渲染...' : '2. 渲染封面（智能合成手部遮罩）' }}
+            </el-button>
+            <p class="render-hint">自动执行：先合成手部遮罩，再应用到书本模板</p>
+          </div>
+
+          <el-alert
+            title="说明"
+            type="warning"
+            :closable="false"
+            show-icon
           >
-            <el-button size="small" type="primary">选择图片</el-button>
-          </el-upload>
-          <img
-            ref="previewImage"
-            class="preview-image"
-            alt="上传图片预览"
-          />
+            <p class="alert-content">
+              此工具演示了如何将您上传的图片，通过透视变换算法，精准地嵌入到模板中，并利用前景蒙版实现手指的遮挡效果。
+            </p>
+          </el-alert>
         </div>
-
-        <div class="render-section">
-          <el-button
-            type="primary"
-            @click="handleRender"
-            :loading="isLoading"
-            :disabled="!userImage"
-            class="render-button"
-          >
-            {{ isLoading ? '正在渲染...' : '2. 渲染封面（智能合成手部遮罩）' }}
-          </el-button>
-          <p class="render-hint">自动执行：先合成手部遮罩，再应用到书本模板</p>
-        </div>
-
-        <el-alert
-          title="说明"
-          type="warning"
-          :closable="false"
-          show-icon
-        >
-          <p class="alert-content">
-            此工具演示了如何将您上传的图片，通过透视变换算法，精准地嵌入到模板中，并利用前景蒙版实现手指的遮挡效果。
-          </p>
-        </el-alert>
       </div>
     </div>
   </div>
@@ -897,12 +904,29 @@ export default {
 
 .unified-content-container {
   display: flex;
+  flex-direction: column;
   gap: 0;
   background-color: #ffffff;
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   border: 1px solid #f0f0f0;
+}
+
+.header-section {
+  width: 100%;
+  padding: 0;
+  background-color: transparent;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.function-section {
+  display: flex;
+  gap: 0;
+  background-color: transparent;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .control-panel,
@@ -982,6 +1006,8 @@ export default {
   align-self: stretch;
 }
 
+
+
 .canvas-container {
   width: 100%;
 }
@@ -1006,5 +1032,7 @@ canvas {
     height: 1px;
     margin: 1.5rem 0;
   }
+
+
 }
 </style>
