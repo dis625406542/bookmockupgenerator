@@ -1,22 +1,27 @@
 <template>
   <div class="mockup-tool-container">
-    <el-card class="header-card">
-      <div class="header-content">
-        <h1 class="main-title">书本模型生成器工具</h1>
-        <p class="subtitle">
-          基于Canvas的分层渲染与透视变换技术
-        </p>
-        <router-link to="/">
-          <el-button type="text" icon="el-icon-arrow-left">返回首页</el-button>
-        </router-link>
-      </div>
-    </el-card>
+    <!-- 新增的标题栏组件 -->
+    <Header />
+    <PageHeader title="Book Mockup Generator Tool" />
 
-    <div class="content-grid">
-      <!-- 控制面板 -->
-      <el-card class="control-panel">
-        <div slot="header" class="card-header">
-          <h2 class="card-title">控制面板</h2>
+    <div class="unified-content-container">
+      <!-- 渲染结果 (移到左边) -->
+      <div class="result-panel">
+        <div class="panel-header">
+          <h2 class="panel-title">渲染效果</h2>
+        </div>
+        <div ref="canvasContainer" class="canvas-container">
+          <canvas ref="mockupCanvas"></canvas>
+        </div>
+      </div>
+
+      <!-- 垂直分割线 -->
+      <div class="vertical-divider"></div>
+
+      <!-- 控制面板 (移到右边) -->
+      <div class="control-panel">
+        <div class="panel-header">
+          <h2 class="panel-title">控制面板</h2>
         </div>
 
         <div class="upload-section">
@@ -63,17 +68,7 @@
             此工具演示了如何将您上传的图片，通过透视变换算法，精准地嵌入到模板中，并利用前景蒙版实现手指的遮挡效果。
           </p>
         </el-alert>
-      </el-card>
-
-      <!-- 渲染结果 -->
-      <el-card class="result-panel">
-        <div slot="header" class="card-header">
-          <h2 class="card-title">渲染效果</h2>
-        </div>
-        <div ref="canvasContainer" class="canvas-container">
-          <canvas ref="mockupCanvas"></canvas>
-        </div>
-      </el-card>
+      </div>
     </div>
   </div>
 </template>
@@ -86,6 +81,10 @@ import bookMask1 from '@/assets/images/book-mask1.png';
 
 export default {
   name: 'MockupTool',
+  components: {
+    Header: () => import('@/components/Header.vue'),
+    PageHeader: () => import('@/components/PageHeader.vue')
+  },
   data() {
     return {
       userImage: null, // 存储用户上传的图片对象
@@ -892,50 +891,37 @@ export default {
   padding: 2rem;
 }
 
-.header-card {
-  margin-bottom: 2rem;
-}
 
-.header-content {
-  text-align: center;
-}
 
-.main-title {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #303133;
-  margin: 0 0 0.5rem 0;
-}
 
-.subtitle {
-  font-size: 1.125rem;
-  color: #606266;
-  margin: 0 0 1rem 0;
-}
 
-.content-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-}
-
-@media (max-width: 768px) {
-  .content-grid {
-    grid-template-columns: 1fr;
-  }
+.unified-content-container {
+  display: flex;
+  gap: 0;
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f0f0f0;
 }
 
 .control-panel,
 .result-panel {
-  height: fit-content;
+  flex: 1;
+  padding: 0;
+  background-color: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  height: auto;
 }
 
-.card-header {
+.panel-header {
   border-bottom: 1px solid #e4e7ed;
-  padding-bottom: 0.5rem;
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
 }
 
-.card-title {
+.panel-title {
   font-size: 1.5rem;
   font-weight: 600;
   color: #303133;
@@ -943,7 +929,7 @@ export default {
 }
 
 .upload-section {
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .upload-label {
@@ -951,7 +937,7 @@ export default {
   font-size: 1rem;
   font-weight: 500;
   color: #606266;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .image-uploader {
@@ -966,7 +952,7 @@ export default {
 }
 
 .render-section {
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .render-button {
@@ -989,6 +975,13 @@ export default {
   line-height: 1.5;
 }
 
+.vertical-divider {
+  width: 1px;
+  background-color: #e4e7ed;
+  margin: 0 2rem;
+  align-self: stretch;
+}
+
 .canvas-container {
   width: 100%;
 }
@@ -999,5 +992,19 @@ canvas {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   width: 100%;
   height: auto;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .unified-content-container {
+    flex-direction: column;
+    padding: 1.5rem;
+  }
+  
+  .vertical-divider {
+    width: 100%;
+    height: 1px;
+    margin: 1.5rem 0;
+  }
 }
 </style>
