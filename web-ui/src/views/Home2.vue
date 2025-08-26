@@ -994,8 +994,6 @@ export default {
 }
 
 canvas {
-  background-color: #f0f0f0;
-  border: 1px solid #ddd;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   width: 100%;
   height: auto;
