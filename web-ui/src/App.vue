@@ -32,12 +32,13 @@ export default {
 
 /* App.vue可以有一些全局的布局样式 */
 #app {
-  display: flex;
-  justify-content: center;
-  padding: 2rem;
+  display: block; /* 改为block布局，移除居中 */
+  justify-content: initial; /* 移除居中 */
+  padding: 0; /* 移除padding */
   box-sizing: border-box;
   background-color: var(--background-color);
   min-height: 100vh;
+  width: 100%; /* 确保app容器也是全屏 */
 }
 
 * {

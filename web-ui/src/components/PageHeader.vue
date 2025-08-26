@@ -30,11 +30,13 @@ export default {
   background: white;
   padding: 24px 0;
   border-bottom: 1px solid #e5e7eb;
+  width: 100%;
 }
 
 .page-header-content {
-  max-width: 1200px;
-  margin: 0 auto;
+  /* 移除max-width限制，让PageHeader真正覆盖全屏 */
+  width: 100%;
+  margin: 0;
   padding: 0 20px;
 }
 

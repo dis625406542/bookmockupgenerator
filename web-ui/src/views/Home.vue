@@ -1,79 +1,82 @@
 <template>
-  <div class="mockup-tool-container">
-    <div class="unified-content-container">
-      <!-- 标题区域 -->
-      <div class="header-section">
-        <Header />
-        <PageHeader title="Book Mockup Generator Tool" />
-      </div>
-
-
-
-      <!-- 功能区域 -->
-      <div class="function-section">
-        <!-- 渲染结果 (移到左边) -->
-        <div class="result-panel">
-          <div class="panel-header">
-            <h2 class="panel-title">渲染效果</h2>
-          </div>
-          <div ref="canvasContainer" class="canvas-container">
-            <canvas ref="mockupCanvas"></canvas>
-          </div>
+  <div class="page-container">
+    <!-- Header 固定置顶，覆盖全屏 -->
+    <Header />
+    
+    <!-- 主内容区域 -->
+    <div class="mockup-tool-container">
+      <div class="unified-content-container">
+        <!-- 标题区域 -->
+        <div class="header-section">
+          <PageHeader title="Book Mockup Generator Tool" />
         </div>
 
-        <!-- 垂直分割线 -->
-        <div class="vertical-divider"></div>
-
-        <!-- 控制面板 (移到右边) -->
-        <div class="control-panel">
-          <div class="panel-header">
-            <h2 class="panel-title">控制面板</h2>
+        <!-- 功能区域 -->
+        <div class="function-section">
+          <!-- 渲染结果 (移到左边) -->
+          <div class="result-panel">
+            <div class="panel-header">
+              <h2 class="panel-title">渲染效果</h2>
+            </div>
+            <div ref="canvasContainer" class="canvas-container">
+              <canvas ref="mockupCanvas"></canvas>
+            </div>
           </div>
 
-          <div class="upload-section">
-            <label class="upload-label">
-              1. 上传封面图片 (例如：小狗图片)
-            </label>
-            <el-upload
-              class="image-uploader"
-              action="#"
-              :auto-upload="false"
-              :show-file-list="false"
-              :on-change="handleImageUpload"
-              accept="image/*"
+          <!-- 垂直分割线 -->
+          <div class="vertical-divider"></div>
+
+          <!-- 控制面板 (移到右边) -->
+          <div class="control-panel">
+            <div class="panel-header">
+              <h2 class="panel-title">控制面板</h2>
+            </div>
+
+            <div class="upload-section">
+              <label class="upload-label">
+                1. 上传封面图片 (例如：小狗图片)
+              </label>
+              <el-upload
+                class="image-uploader"
+                action="#"
+                :auto-upload="false"
+                :show-file-list="false"
+                :on-change="handleImageUpload"
+                accept="image/*"
+              >
+                <el-button size="small" type="primary">选择图片</el-button>
+              </el-upload>
+              <img
+                ref="previewImage"
+                class="preview-image"
+                alt="上传图片预览"
+              />
+            </div>
+
+            <div class="render-section">
+              <el-button
+                type="primary"
+                @click="handleRender"
+                :loading="isLoading"
+                :disabled="!userImage"
+                class="render-button"
+              >
+                {{ isLoading ? '正在渲染...' : '2. 渲染封面（智能合成手部遮罩）' }}
+              </el-button>
+              <p class="render-hint">自动执行：先合成手部遮罩，再应用到书本模板</p>
+            </div>
+
+            <el-alert
+              title="说明"
+              type="warning"
+              :closable="false"
+              show-icon
             >
-              <el-button size="small" type="primary">选择图片</el-button>
-            </el-upload>
-            <img
-              ref="previewImage"
-              class="preview-image"
-              alt="上传图片预览"
-            />
+              <p class="alert-content">
+                此工具演示了如何将您上传的图片，通过透视变换算法，精准地嵌入到模板中，并利用前景蒙版实现手指的遮挡效果。
+              </p>
+            </el-alert>
           </div>
-
-          <div class="render-section">
-            <el-button
-              type="primary"
-              @click="handleRender"
-              :loading="isLoading"
-              :disabled="!userImage"
-              class="render-button"
-            >
-              {{ isLoading ? '正在渲染...' : '2. 渲染封面（智能合成手部遮罩）' }}
-            </el-button>
-            <p class="render-hint">自动执行：先合成手部遮罩，再应用到书本模板</p>
-          </div>
-
-          <el-alert
-            title="说明"
-            type="warning"
-            :closable="false"
-            show-icon
-          >
-            <p class="alert-content">
-              此工具演示了如何将您上传的图片，通过透视变换算法，精准地嵌入到模板中，并利用前景蒙版实现手指的遮挡效果。
-            </p>
-          </el-alert>
         </div>
       </div>
     </div>
@@ -892,51 +895,86 @@ export default {
 </script>
 
 <style scoped>
-.mockup-tool-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-
-
-
-
-
-.unified-content-container {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+.page-container {
+  min-height: 100vh;
   background-color: #ffffff;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  border: 1px solid #f0f0f0;
+  width: 100vw !important; /* 强制使用视口宽度 */
+  max-width: none !important; /* 移除任何最大宽度限制 */
+  margin: 0 !important;
+  padding: 0 !important;
+  position: relative;
+  left: 0;
+  right: 0;
+  box-sizing: border-box;
 }
 
-.header-section {
+/* Header 固定置顶，覆盖全屏 */
+.page-container :deep(.header) {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important; /* 强制使用视口宽度 */
+  max-width: none !important; /* 移除任何最大宽度限制 */
+  z-index: 1000 !important;
+  background-color: #ffffff !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  box-sizing: border-box;
+}
+
+/* 完全移除容器概念，直接在全屏背景上布局 */
+.mockup-tool-container {
   width: 100%;
+  margin: 0;
+  padding: 0;
+  padding-top: 6rem; /* 只保留顶部间距，避免被固定Header遮挡 */
+}
+
+/* 移除所有容器样式，直接在全屏背景上布局 */
+.unified-content-container {
+  width: 100%;
+  margin: 0;
   padding: 0;
   background-color: transparent;
-  border-radius: 0;
+  border: none;
   box-shadow: none;
+  border-radius: 0;
 }
 
+/* 标题区域直接在全屏背景上 */
+.header-section {
+  width: 100%;
+  padding: 2rem;
+  margin: 0;
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+/* 功能区域直接在全屏背景上 */
 .function-section {
   display: flex;
-  gap: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0 2rem 2rem 2rem;
   background-color: transparent;
-  border-radius: 0;
+  border: none;
   box-shadow: none;
+  border-radius: 0;
 }
 
+/* 左右面板直接在全屏背景上 */
 .control-panel,
 .result-panel {
   flex: 1;
   padding: 0;
+  margin: 0;
   background-color: transparent;
-  border-radius: 0;
+  border: none;
   box-shadow: none;
-  height: auto;
+  border-radius: 0;
 }
 
 .panel-header {
@@ -1022,6 +1060,16 @@ canvas {
 
 /* 响应式设计 */
 @media (max-width: 768px) {
+  .page-container :deep(.header) {
+    width: 100% !important;
+    position: fixed !important;
+    top: 0 !important;
+  }
+  
+  .mockup-tool-container {
+    padding-top: 5rem; /* 移动端减少顶部间距 */
+  }
+  
   .unified-content-container {
     flex-direction: column;
     padding: 1.5rem;
@@ -1032,7 +1080,5 @@ canvas {
     height: 1px;
     margin: 1.5rem 0;
   }
-
-
 }
 </style>

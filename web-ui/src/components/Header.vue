@@ -50,11 +50,13 @@ export default {
   top: 0;
   z-index: 100;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  width: 100%;
 }
 
 .header-content {
-  max-width: 1200px;
-  margin: 0 auto;
+  /* 移除max-width限制，让Header真正覆盖全屏 */
+  width: 100%;
+  margin: 0;
   padding: 0 20px;
   display: flex;
   align-items: center;
