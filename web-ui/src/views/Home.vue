@@ -945,7 +945,7 @@ export default {
 /* 标题区域直接在全屏背景上 */
 .header-section {
   width: 100%;
-  padding: 0; /* 移除padding，避免多余的白色区域 */
+  padding: 0 6rem; /* 增加左右边距，让内容更居中 */
   margin: 0;
   background-color: transparent;
   border: none;
@@ -967,7 +967,7 @@ export default {
   display: flex;
   width: 100%;
   margin: 0;
-  padding: 0 2rem 2rem 2rem;
+  padding: 0 6rem 2rem 6rem; /* 增加左右边距，与标题区域保持一致 */
   background-color: transparent;
   border: none;
   box-shadow: none;
@@ -993,17 +993,13 @@ export default {
   border-radius: 0;
 }
 
+/* 移除面板标题样式 */
 .panel-header {
-  border-bottom: 1px solid #e4e7ed;
-  padding-bottom: 1rem;
-  margin-bottom: 2rem;
+  display: none; /* 隐藏面板标题 */
 }
 
 .panel-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #303133;
-  margin: 0;
+  display: none; /* 隐藏面板标题文字 */
 }
 
 .upload-section {
@@ -1084,6 +1080,14 @@ canvas {
   
   .mockup-tool-container {
     padding-top: 5rem; /* 移动端减少顶部间距 */
+  }
+  
+  .header-section {
+    padding: 0 3rem; /* 移动端减少左右边距 */
+  }
+  
+  .function-section {
+    padding: 0 3rem 2rem 3rem; /* 移动端减少左右边距 */
   }
   
   .unified-content-container {

@@ -57,7 +57,7 @@ export default {
   /* 移除max-width限制，让Header真正覆盖全屏 */
   width: 100%;
   margin: 0;
-  padding: 0 20px;
+  padding: 0 6rem; /* 增加左右边距，与页面其他部分保持一致 */
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -169,6 +169,10 @@ export default {
 }
 
 @media (max-width: 768px) {
+  .header-content {
+    padding: 0 2rem; /* 移动端减少左右边距 */
+  }
+  
   .nav-links {
     gap: 20px;
   }

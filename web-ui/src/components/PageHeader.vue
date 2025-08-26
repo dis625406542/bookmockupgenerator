@@ -37,7 +37,7 @@ export default {
   /* 移除max-width限制，让PageHeader真正覆盖全屏 */
   width: 100%;
   margin: 0;
-  padding: 24px 20px; /* 将padding移到这里，确保内容有适当间距 */
+  padding: 24px 6rem; /* 增加左右边距，与页面其他部分保持一致 */
   text-align: left; /* 确保内容左对齐 */
 }
 
@@ -70,6 +70,10 @@ export default {
 }
 
 @media (max-width: 768px) {
+  .page-header-content {
+    padding: 24px 2rem; /* 移动端减少左右边距 */
+  }
+  
   .page-title {
     font-size: 24px;
   }
