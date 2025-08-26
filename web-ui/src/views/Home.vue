@@ -928,7 +928,7 @@ export default {
   width: 100%;
   margin: 0;
   padding: 0;
-  padding-top: 6rem; /* 只保留顶部间距，避免被固定Header遮挡 */
+  padding-top: 0; /* 移除顶部间距，避免多余的白色区域 */
 }
 
 /* 移除所有容器样式，直接在全屏背景上布局 */
@@ -945,12 +945,21 @@ export default {
 /* 标题区域直接在全屏背景上 */
 .header-section {
   width: 100%;
-  padding: 2rem;
+  padding: 0; /* 移除padding，避免多余的白色区域 */
   margin: 0;
   background-color: transparent;
   border: none;
   box-shadow: none;
   border-radius: 0;
+  display: flex;
+  justify-content: center; /* 标题区域居中 */
+}
+
+/* 标题内容左对齐 */
+.header-section :deep(.page-header) {
+  width: 100%;
+  max-width: 1200px; /* 限制内容最大宽度，避免在大屏幕上过宽 */
+  text-align: left; /* 标题内容左对齐 */
 }
 
 /* 功能区域直接在全屏背景上 */
@@ -963,6 +972,13 @@ export default {
   border: none;
   box-shadow: none;
   border-radius: 0;
+  justify-content: center; /* 功能区域居中 */
+}
+
+/* 功能区域内容容器 */
+.function-section > * {
+  max-width: 1200px; /* 限制内容最大宽度，与标题区域保持一致 */
+  width: 100%;
 }
 
 /* 左右面板直接在全屏背景上 */

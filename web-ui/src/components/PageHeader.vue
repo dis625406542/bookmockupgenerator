@@ -27,8 +27,8 @@ export default {
 
 <style scoped>
 .page-header {
-  background: white;
-  padding: 24px 0;
+  background: transparent; /* 改为透明，因为父容器已经是白色背景 */
+  padding: 0; /* 移除所有padding，避免多余的白色区域 */
   border-bottom: 1px solid #e5e7eb;
   width: 100%;
 }
@@ -37,7 +37,8 @@ export default {
   /* 移除max-width限制，让PageHeader真正覆盖全屏 */
   width: 100%;
   margin: 0;
-  padding: 0 20px;
+  padding: 24px 20px; /* 将padding移到这里，确保内容有适当间距 */
+  text-align: left; /* 确保内容左对齐 */
 }
 
 .page-title {

@@ -45,7 +45,7 @@ export default {
 <style scoped>
 .header {
   background: white;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: none; /* 移除底部边框，避免重复的分隔线 */
   position: sticky;
   top: 0;
   z-index: 100;
@@ -62,6 +62,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   height: 64px;
+  text-align: left; /* 确保内容左对齐 */
 }
 
 .logo {
