@@ -95,6 +95,7 @@ export default {
   display: flex;
   align-items: center;
   gap: 32px;
+  margin-left: 0.5rem; /* 添加小的左边距，让文字贴近Logo */
 }
 
 .search-icon {
@@ -133,6 +134,7 @@ export default {
   display: flex;
   align-items: center;
   gap: 12px;
+  margin-left: auto; /* 让右侧按钮靠右 */
 }
 
 .upgrade-btn {

@@ -37,7 +37,7 @@ export default {
   /* 移除max-width限制，让PageHeader真正覆盖全屏 */
   width: 100%;
   margin: 0;
-  padding: 24px 6rem; /* 增加左右边距，与页面其他部分保持一致 */
+  padding-block: 20px;/* 减少左边距从6rem到2rem，减少左边空白 */
   text-align: left; /* 确保内容左对齐 */
 }
 

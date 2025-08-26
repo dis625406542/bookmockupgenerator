@@ -962,6 +962,10 @@ export default {
   text-align: left; /* 标题内容左对齐 */
 }
 
+.header-section :deep(.page-header-content) {
+  text-align: left; /* 确保PageHeader内容左对齐 */
+}
+
 /* 功能区域直接在全屏背景上 */
 .function-section {
   display: flex;
