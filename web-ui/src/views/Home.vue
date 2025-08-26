@@ -948,7 +948,7 @@ export default {
   padding: 0 6rem; /* 增加左右边距，让内容更居中 */
   margin: 0;
   background-color: transparent;
-  border: none;
+  border: 1px solid #e5e7eb; /* 添加银色1px边框 */
   box-shadow: none;
   border-radius: 0;
   display: flex;
@@ -960,6 +960,7 @@ export default {
   width: 100%;
   max-width: 1200px; /* 限制内容最大宽度，避免在大屏幕上过宽 */
   text-align: left; /* 标题内容左对齐 */
+  border: 1px solid transparent; /* 边框透明，不要有颜色 */
 }
 
 .header-section :deep(.page-header-content) {
@@ -972,6 +973,7 @@ export default {
   width: 100%;
   margin: 0;
   padding: 0 6rem 2rem 6rem; /* 增加左右边距，与标题区域保持一致 */
+  padding-top: 30px;
   background-color: transparent;
   border: none;
   box-shadow: none;
