@@ -952,7 +952,7 @@ export default {
   box-shadow: none;
   border-radius: 0;
   display: flex;
-  justify-content: center; /* 标题区域居中 */
+  justify-content: flex-start; /* 标题区域左对齐 */
 }
 
 /* 标题内容左对齐 */
@@ -972,7 +972,7 @@ export default {
   border: none;
   box-shadow: none;
   border-radius: 0;
-  justify-content: center; /* 功能区域居中 */
+  justify-content: flex-start; /* 功能区域左对齐 */
 }
 
 /* 功能区域内容容器 */
