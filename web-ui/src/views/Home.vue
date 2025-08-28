@@ -1065,8 +1065,30 @@ export default {
 
 /* 控制面板特定样式 */
 .control-panel {
-  max-width: 480px;
+  max-width: 380px; /* 从480px改为380px，更窄 */
   flex-shrink: 0;
+  /* 重新定义所有被覆盖的属性 */
+  border: 1px solid #c0c0c0 !important; /* 银色边框 */
+  border-radius: 8px !important; /* 圆角 */
+  background: linear-gradient(145deg, #ffffff, #f8f9fa) !important; /* 渐变背景 */
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important; /* 阴影效果 */
+  padding: 1.5rem !important; /* 内边距 */
+  position: relative; /* 为伪元素定位 */
+}
+
+/* 新增：控制面板顶部装饰条 */
+.control-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #c0c0c0, #e0e0e0, #c0c0c0);
+  border-radius: 8px 8px 0 0;
 }
 
 /* 结果面板特定样式 */
