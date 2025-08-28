@@ -18,6 +18,40 @@
             <div ref="canvasContainer" class="canvas-container">
               <canvas ref="mockupCanvas"></canvas>
             </div>
+            
+            <!-- 新增：信息模块 -->
+            <div class="info-panel">
+              <div class="info-tags">
+                <span class="tag">front</span>
+                <span class="tag-separator">|</span>
+                <span class="tag">book</span>
+                <span class="tag-separator">|</span>
+                <span class="tag">hardcover book</span>
+                <span class="tag-separator">|</span>
+                <span class="tag">book mockup</span>
+                <span class="tag-separator">|</span>
+                <span class="tag">hardcover</span>
+                <span class="tag-separator">|</span>
+                <span class="tag">hardcover book mockup</span>
+                <span class="tag-separator">|</span>
+                <span class="tag">book mockup generator</span>
+              </div>
+              
+              <div class="info-description">
+                This charming mockup template features a small child sitting among friends, holding a book cover in their hands.
+              </div>
+              
+              <div class="info-template">
+                <div class="template-item">
+                  <span class="template-label">Published:</span>
+                  <span class="template-value">24 Jun 2024</span>
+                </div>
+                <div class="template-item">
+                  <span class="template-label">Size:</span>
+                  <span class="template-value">1024x1024px</span>
+                </div>
+              </div>
+            </div>
           </div>
 
 
@@ -1045,6 +1079,66 @@ export default {
 .result-panel {
   max-width: 520px;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 新增：信息模块样式 */
+.info-panel {
+  margin-top: 1rem;
+  margin-left: -2rem; /* 进一步向左扩展，让信息模块更靠左 */
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  font-size: 0.8rem; /* 减小字体大小 */
+  line-height: 1.4; /* 调整行高 */
+  width: calc(100% + 4rem); /* 进一步增加宽度，向左扩展 */
+}
+
+.info-tags {
+  margin-bottom: 0.75rem;
+  line-height: 1.6; /* 增加标签行高，便于换行 */
+}
+
+.tag {
+  color: #495057;
+  font-weight: 500;
+  display: inline-block; /* 让标签可以换行 */
+  margin-bottom: 0.2rem; /* 标签底部间距 */
+}
+
+.tag-separator {
+  color: #6c757d;
+  margin: 0 0.3rem; /* 减少分隔符间距 */
+}
+
+.info-description {
+  color: #6c757d;
+  margin-bottom: 0.75rem;
+  font-style: italic;
+}
+
+.info-template {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.template-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.template-label {
+  color: #495057;
+  font-weight: 500;
+}
+
+.template-value {
+  color: #6c757d;
+  font-family: monospace;
 }
 
 /* 控制面板样式 */
