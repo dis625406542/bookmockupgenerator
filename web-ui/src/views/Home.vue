@@ -1202,7 +1202,7 @@ export default {
 /* More like this 组件样式 */
 .more-like-this-section {
   margin-top: 0; /* 减少与信息模块的间距 */
-  margin-left: -2rem; /* 与信息模块左边对齐 */
+  margin-left: 12rem; /* 与信息模块左边对齐 */
   width: calc(100% + 4rem); /* 与信息模块宽度一致 */
 }
 

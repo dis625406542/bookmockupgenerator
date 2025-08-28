@@ -1,7 +1,7 @@
 <template>
   <div class="image-carousel">
     <div class="carousel-header">
-      <h3>More like this</h3>
+      <span style="font-size: 20px;">More like this</span>
     </div>
     
     <div class="carousel-container">
@@ -127,7 +127,7 @@ export default {
 .image-carousel {
   margin-top: 0; /* 移除顶部间距，与信息模块自然衔接 */
   margin-left: 0; /* 移除左边距 */
-  padding: 1.5rem 0; /* 减少内边距，只保留上下间距 */
+  padding: 0 0; /* 减少内边距，只保留上下间距 */
   background: transparent; /* 移除白色背景 */
   border-radius: 0; /* 移除圆角 */
   box-shadow: none; /* 移除阴影 */
