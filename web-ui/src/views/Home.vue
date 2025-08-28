@@ -125,12 +125,15 @@
                  {{ isLoading ? '正在渲染...' : '2. 渲染封面（智能合成手部遮罩）' }}
                </el-button>
              </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
+                     </div>
+         </div>
+         
+         <!-- 新增：More like this 轮播组件 -->
+         <ImageCarousel />
+       </div>
+     </div>
+   </div>
+ </template>
 
 <script>
 // 【重要】这是在Vue项目中引入图片的标准方式
@@ -142,7 +145,8 @@ export default {
   name: 'MockupTool',
   components: {
     Header: () => import('@/components/Header.vue'),
-    PageHeader: () => import('@/components/PageHeader.vue')
+    PageHeader: () => import('@/components/PageHeader.vue'),
+    ImageCarousel: () => import('@/components/ImageCarousel.vue')
   },
   data() {
     return {
