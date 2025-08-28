@@ -1042,7 +1042,7 @@ export default {
   box-shadow: none;
   border-radius: 0;
   justify-content: center; /* 功能区域居中对齐 */
-  gap: 4rem; /* 增加左右面板之间的间距 */
+  gap: 2rem; /* 减少左右面板之间的间距，让控制面板更靠近图片模板 */
 }
 
 /* 功能区域内容容器 */
@@ -1068,27 +1068,17 @@ export default {
   max-width: 380px; /* 从480px改为380px，更窄 */
   flex-shrink: 0;
   /* 重新定义所有被覆盖的属性 */
-  border: 1px solid #c0c0c0 !important; /* 银色边框 */
-  border-radius: 8px !important; /* 圆角 */
-  background: linear-gradient(145deg, #ffffff, #f8f9fa) !important; /* 渐变背景 */
-  box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.08),
-    0 1px 3px rgba(0, 0, 0, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important; /* 阴影效果 */
+  border: 1px solid rgba(192, 192, 192, 0.3) !important; /* 更细更透明的银色边框 */
+  border-radius: 6px !important; /* 稍微减小圆角 */
+  background: #ffffff !important; /* 纯白背景，去掉渐变 */
+  box-shadow: none !important; /* 去掉所有阴影 */
   padding: 1.5rem !important; /* 内边距 */
   position: relative; /* 为伪元素定位 */
 }
 
-/* 新增：控制面板顶部装饰条 */
+/* 去掉顶部装饰条 */
 .control-panel::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #c0c0c0, #e0e0e0, #c0c0c0);
-  border-radius: 8px 8px 0 0;
+  display: none; /* 隐藏顶部装饰条 */
 }
 
 /* 结果面板特定样式 */
