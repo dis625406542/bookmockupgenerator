@@ -77,58 +77,16 @@
                 alt="上传图片预览"
               />
             </div>
-
-            <div class="color-control">
-              <div class="control-item">
-                <span class="label">Color:</span>
-                <el-switch v-model="colorEnabled" active-color="#13ce66"></el-switch>
-              </div>
-              <div class="color-picker-wrapper">
-                <el-color-picker v-model="selectedColor" size="small"></el-color-picker>
-                <span class="color-value">#FFFFFF</span>
-              </div>
-            </div>
-
-            <div class="background-control">
-              <div class="control-item">
-                <span class="label">Background:</span>
-                <el-switch v-model="backgroundEnabled" active-color="#13ce66"></el-switch>
-              </div>
+            <el-divider></el-divider>
+            <div class="control-group">
               <div class="format-selector">
-                <el-radio-group v-model="backgroundFormat" size="small">
+                <el-radio-group v-model="format" size="small">
                   <el-radio-button label="JPEG"></el-radio-button>
                   <el-radio-button label="PNG"></el-radio-button>
                 </el-radio-group>
               </div>
+              <el-button type="primary" class="upgrade-btn">Upgrade to Download</el-button>
             </div>
-
-            <el-divider></el-divider>
-
-            <el-button type="primary" class="upgrade-btn">Upgrade to Download</el-button>
-
-            <div class="render-section" style="margin-top: 1rem;">
-              <el-button
-                type="primary"
-                @click="handleRender"
-                :loading="isLoading"
-                :disabled="!userImage"
-                class="render-button"
-              >
-                {{ isLoading ? '正在渲染...' : '2. 渲染封面（智能合成手部遮罩）' }}
-              </el-button>
-              <p class="render-hint">自动执行：先合成手部遮罩，再应用到书本模板</p>
-            </div>
-
-            <el-alert
-              title="说明"
-              type="warning"
-              :closable="false"
-              show-icon
-            >
-              <p class="alert-content">
-                此工具演示了如何将您上传的图片，通过透视变换算法，精准地嵌入到模板中，并利用前景蒙版实现手指的遮挡效果。
-              </p>
-            </el-alert>
           </div>
         </div>
       </div>
@@ -1064,7 +1022,7 @@ export default {
 
 /* 控制面板特定样式 */
 .control-panel {
-  max-width: 380px; /* 从480px改为380px，更窄 */
+  max-width: 30vw; /* 从480px改为380px，更窄 */
   flex-shrink: 0;
   /* 重新定义所有被覆盖的属性 */
   border: 1px solid rgba(192, 192, 192, 0.3) !important; /* 更细更透明的银色边框 */
