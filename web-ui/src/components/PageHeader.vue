@@ -42,11 +42,11 @@ export default {
 }
 
 .page-title {
-  font-size: 28px;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 600;
   color: #111827;
   margin: 0 0 12px 0;
-  line-height: 1.2;
+  line-height: 1.3;
 }
 
 .breadcrumbs {
@@ -75,7 +75,7 @@ export default {
   }
   
   .page-title {
-    font-size: 24px;
+    font-size: 20px;
   }
 }
 </style>
