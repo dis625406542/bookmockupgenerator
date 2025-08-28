@@ -22,6 +22,7 @@
             <!-- 新增：信息模块 -->
             <div class="info-panel">
               <div class="info-tags">
+                <span class="tag">Tags:  </span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <span class="tag">front</span>
                 <span class="tag-separator">|</span>
                 <span class="tag">book</span>
@@ -1085,10 +1086,11 @@ export default {
 
 /* 新增：信息模块样式 */
 .info-panel {
-  margin-top: 1rem;
+  margin-top: 3rem; /* 减少顶部间距，确保底部对齐 */
   margin-left: -2rem; /* 进一步向左扩展，让信息模块更靠左 */
   padding: 1rem;
-  background-color: #f8f9fa;
+  padding-bottom: 1.5rem; /* 增加底部内边距，微调底部位置 */
+  background-color: #ffffff; /* 改为白色背景，与页面背景一致 */
   border: 1px solid #e9ecef;
   border-radius: 6px;
   font-size: 0.8rem; /* 减小字体大小 */
