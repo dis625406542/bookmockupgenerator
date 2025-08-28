@@ -55,8 +55,6 @@
             </div>
           </div>
 
-
-
           <!-- 控制面板 (移到右边) -->
           <div class="control-panel">
             <div class="panel-header">
@@ -112,28 +110,31 @@
                 alt="上传图片预览"
               />
             </div>
-                         <el-divider></el-divider>
+            <el-divider></el-divider>
 
-             <div class="render-section" style="margin-top: 1rem;">
-               <el-button
-                 type="primary"
-                 @click="handleRender"
-                 :loading="isLoading"
-                 :disabled="!userImage"
-                 class="render-button"
-               >
-                 {{ isLoading ? '正在渲染...' : '2. 渲染封面（智能合成手部遮罩）' }}
-               </el-button>
-             </div>
-                     </div>
-         </div>
-         
-         <!-- 新增：More like this 轮播组件 -->
-        <div style="padding-left: 250px;"><ImageCarousel /></div>
-       </div>
-     </div>
-   </div>
- </template>
+            <div class="render-section" style="margin-top: 1rem;">
+              <el-button
+                type="primary"
+                @click="handleRender"
+                :loading="isLoading"
+                :disabled="!userImage"
+                class="render-button"
+              >
+                {{ isLoading ? '正在渲染...' : '2. 渲染封面（智能合成手部遮罩）' }}
+              </el-button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 新增：More like this 轮播组件 -->
+        <div class="more-like-this-section">
+          <ImageCarousel />
+        </div>
+
+      </div>
+    </div>
+  </div>
+</template>
 
 <script>
 // 【重要】这是在Vue项目中引入图片的标准方式
@@ -1196,6 +1197,13 @@ export default {
   font-family: monospace;
   font-size: 0.9rem;
   color: #606266;
+}
+
+/* More like this 组件样式 */
+.more-like-this-section {
+  margin-top: 0; /* 减少与信息模块的间距 */
+  margin-left: -2rem; /* 与信息模块左边对齐 */
+  width: calc(100% + 4rem); /* 与信息模块宽度一致 */
 }
 
 .background-control {

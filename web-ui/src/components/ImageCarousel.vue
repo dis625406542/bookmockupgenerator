@@ -125,85 +125,84 @@ export default {
 
 <style scoped>
 .image-carousel {
-  margin-top: 3rem;
-  margin-left: -4rem; /* 进一步向左移动，与信息模块扩展后的左边完全对齐 */
-  padding: 2rem;
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  margin-top: 0; /* 移除顶部间距，与信息模块自然衔接 */
+  margin-left: 0; /* 移除左边距 */
+  padding: 1.5rem 0; /* 减少内边距，只保留上下间距 */
+  background: transparent; /* 移除白色背景 */
+  border-radius: 0; /* 移除圆角 */
+  box-shadow: none; /* 移除阴影 */
 }
 
 .carousel-header {
   text-align: left;
-  margin-bottom: 2rem;
-  position: sticky;
-  top: 0;
-  background: #ffffff;
-  z-index: 10;
-  padding: 1rem 0;
+  margin-bottom: 1.5rem; /* 减少标题下方间距 */
+  position: relative; /* 移除sticky定位 */
+  background: transparent; /* 移除背景 */
+  z-index: 1;
+  padding: 0; /* 移除内边距 */
 }
 
 .carousel-header h3 {
-  font-size: 1.6rem;
-  font-weight: 800;
+  font-size: 1.5rem; /* 稍微减小字体 */
+  font-weight: 700; /* 调整字重 */
   color: #1a1a1a;
   margin: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.3px;
 }
 
 .carousel-container {
   position: relative;
   overflow: hidden;
-  border-radius: 8px;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  border-radius: 0; /* 移除圆角 */
+  background: transparent; /* 移除背景 */
+  border: none; /* 移除边框 */
 }
 
 .carousel-wrapper {
   display: flex;
-  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  padding: 1.5rem;
-  gap: 16px;
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* 稍微加快动画 */
+  padding: 0.5rem 0; /* 减少内边距 */
+  gap: 20px; /* 增加项目间距 */
 }
 
 .carousel-item {
-  flex: 0 0 220px;
+  flex: 0 0 200px; /* 稍微减小项目宽度 */
   text-align: center;
   transition: all 0.3s ease;
   cursor: pointer;
 }
 
 .carousel-item:hover {
-  transform: translateY(-8px);
+  transform: translateY(-4px); /* 减少悬停效果 */
 }
 
 .carousel-item.active {
-  transform: scale(1.05);
+  transform: scale(1.02); /* 减少激活状态的缩放 */
 }
 
 .item-image {
-  width: 220px;
-  height: 220px;
-  border-radius: 8px;
+  width: 200px; /* 调整图片尺寸 */
+  height: 200px;
+  border-radius: 6px; /* 减小圆角 */
   overflow: hidden;
-  border: 1px solid #e5e7eb;
-  margin-bottom: 1rem;
+  border: 1px solid #f0f0f0; /* 更淡的边框 */
+  margin-bottom: 0.75rem;
   transition: all 0.3s ease;
-  background: #f8f9fa;
+  background: #fafafa; /* 更淡的背景色 */
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .carousel-item:hover .item-image {
-  border-color: #d1d5db;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #e0e0e0; /* 悬停时稍微深一点的边框 */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); /* 更淡的阴影 */
 }
 
 .mockup-placeholder {
-  color: #6b7280;
-  font-size: 0.875rem;
+  color: #9ca3af; /* 更淡的文字颜色 */
+  font-size: 0.8rem;
   font-weight: 500;
   text-align: center;
   padding: 1rem;
@@ -211,13 +210,13 @@ export default {
 }
 
 .item-title {
-  font-size: 0.8rem;
+  font-size: 0.75rem; /* 稍微减小字体 */
   font-weight: 500;
-  color: #374151;
-  margin-top: 0.75rem;
+  color: #4b5563; /* 更淡的文字颜色 */
+  margin-top: 0.5rem;
   line-height: 1.3;
   text-align: left;
-  padding: 0 0.5rem;
+  padding: 0 0.25rem;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
@@ -225,80 +224,82 @@ export default {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 48px;
-  height: 48px;
+  width: 40px; /* 稍微减小箭头尺寸 */
+  height: 40px;
   border: none;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  font-size: 1.2rem;
+  background: #f3f4f6; /* 更淡的背景色 */
+  color: #6b7280; /* 更淡的图标颜色 */
+  font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* 更淡的阴影 */
   z-index: 10;
 }
 
 .carousel-arrow:hover {
-  transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  transform: translateY(-50%) scale(1.05);
+  background: #e5e7eb; /* 悬停时稍微深一点的背景 */
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
 }
 
 .carousel-arrow:disabled {
-  background: #bdc3c7;
+  background: #f9fafb;
+  color: #d1d5db;
   cursor: not-allowed;
-  transform: translateY(-50%) scale(0.9);
+  transform: translateY(-50%) scale(0.95);
 }
 
 .carousel-arrow-left {
-  left: 20px;
+  left: 10px; /* 调整位置 */
 }
 
 .carousel-arrow-right {
-  right: 20px;
+  right: 10px;
 }
 
 .browse-all-section {
   text-align: center;
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid #e5e7eb;
+  margin-top: 1.5rem; /* 减少顶部间距 */
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0; /* 更淡的分隔线 */
 }
 
 .browse-all-btn {
-  background: linear-gradient(135deg, #ec4899 0%, #be185d 100%) !important;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important; /* 更柔和的渐变色 */
   border: none !important;
-  padding: 12px 32px !important;
+  padding: 10px 28px !important;
   font-weight: 600 !important;
-  font-size: 0.95rem !important;
-  border-radius: 8px !important;
-  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3) !important;
+  font-size: 0.9rem !important;
+  border-radius: 6px !important;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2) !important;
   transition: all 0.3s ease !important;
 }
 
 .browse-all-btn:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.3) !important;
 }
 
 /* 响应式设计 */
 @media (max-width: 768px) {
   .carousel-item {
-    flex: 0 0 180px;
+    flex: 0 0 160px;
   }
   
   .item-image {
-    width: 180px;
-    height: 180px;
+    width: 160px;
+    height: 160px;
   }
   
   .carousel-arrow {
-    width: 40px;
-    height: 40px;
-    font-size: 1rem;
+    width: 36px;
+    height: 36px;
+    font-size: 0.9rem;
   }
   
   .carousel-header h3 {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
   }
 }
 </style>
