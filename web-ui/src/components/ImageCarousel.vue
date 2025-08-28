@@ -126,6 +126,7 @@ export default {
 <style scoped>
 .image-carousel {
   margin-top: 3rem;
+  margin-left: -4rem; /* 进一步向左移动，与信息模块扩展后的左边完全对齐 */
   padding: 2rem;
   background: #ffffff;
   border-radius: 16px;

@@ -129,7 +129,7 @@
          </div>
          
          <!-- 新增：More like this 轮播组件 -->
-         <ImageCarousel />
+        <div style="padding-left: 250px;"><ImageCarousel /></div>
        </div>
      </div>
    </div>
@@ -524,49 +524,6 @@ export default {
 
         // === 第4步：绘制前景蒙版图层 (手指) ===
         console.log('第4步：绘制前景蒙版图层（手指）- 已注释掉');
-        // 暂时注释掉手指蒙版渲染，先看封面效果
-        /*
-        const maskLayer = this.template.layers.find(l => l.id === 'mask');
-        if (maskLayer) {
-          const maskImg = await this.loadImage(maskLayer.src);
-          
-          // 关键修复：手指蒙版应该只覆盖书本区域，不是整个Canvas
-          // 使用与封面相同的坐标区域来绘制手指蒙版
-          const coverLayer = this.template.layers.find(l => l.type === 'transformed-image' && l.name === 'cover');
-          if (coverLayer) {
-            console.log('使用封面坐标区域绘制手指蒙版');
-            
-            // 计算手指蒙版的绘制区域（与封面区域完全一致）
-            const dest = coverLayer.destPoints.map(p => ({ x: p.x * scale, y: p.y * scale }));
-            
-            // 计算边界框（与封面完全一致）
-            const minX = Math.min(...dest.map(p => p.x));
-            const minY = Math.min(...dest.map(p => p.y));
-            const maxX = Math.max(...dest.map(p => p.x));
-            const maxY = Math.max(...dest.map(p => p.y));
-            const width = maxX - minX;
-            const height = maxY - minY;
-            
-            console.log('手指蒙版绘制区域:', { minX, minY, width, height });
-            
-            // 只在这个区域内绘制手指蒙版
-            ctx.save();
-            ctx.beginPath();
-            ctx.rect(minX, minY, width, height);
-            ctx.clip();
-            
-            // 绘制手指蒙版，但只在这个区域内
-            ctx.drawImage(maskImg, minX, minY, width, height);
-            ctx.restore();
-            
-            console.log('✓ 手指蒙版图层绘制完成（限制在封面区域）');
-          } else {
-            // 如果没有封面图层，则按原来的方式绘制
-            ctx.drawImage(maskImg, 0, 0, canvas.width, canvas.height);
-            console.log('✓ 手指蒙版图层绘制完成（全Canvas覆盖）');
-          }
-        }
-        */
         console.log('✓ 手指蒙版图层已跳过（注释掉）');
         
         console.log('=== 渲染完成，图层顺序：背景→封面→光影→手指 ===');
