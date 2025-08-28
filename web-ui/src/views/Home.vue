@@ -15,9 +15,6 @@
         <div class="function-section">
           <!-- 渲染结果 (移到左边) -->
           <div class="result-panel">
-            <div class="panel-header">
-              <h2 class="panel-title">渲染效果</h2>
-            </div>
             <div ref="canvasContainer" class="canvas-container">
               <canvas ref="mockupCanvas"></canvas>
             </div>
@@ -29,13 +26,40 @@
           <!-- 控制面板 (移到右边) -->
           <div class="control-panel">
             <div class="panel-header">
-              <h2 class="panel-title">控制面板</h2>
+              <span class="panel-title">Edit this template</span>
+              <el-button style="float: right; padding: 3px 0" type="text">Download PSD</el-button>
             </div>
 
-            <div class="upload-section">
-              <label class="upload-label">
-                1. 上传封面图片 (例如：小狗图片)
-              </label>
+            <div class="control-group">
+              <div class="format-selector">
+                <el-radio-group v-model="format" size="small">
+                  <el-radio-button label="JPEG"></el-radio-button>
+                  <el-radio-button label="PNG"></el-radio-button>
+                </el-radio-group>
+              </div>
+              <el-button type="primary" class="upgrade-btn">Upgrade to Download</el-button>
+            </div>
+
+            <el-divider></el-divider>
+
+            <div class="control-item">
+              <span class="label">Highlights</span>
+              <el-switch v-model="highlights" active-color="#13ce66"></el-switch>
+            </div>
+
+            <div class="control-item">
+              <span class="label">Shadows</span>
+              <el-switch v-model="shadows" active-color="#13ce66"></el-switch>
+            </div>
+
+            <el-divider></el-divider>
+
+            <div class="image-control">
+              <div class="control-item">
+                <span class="label">Your image:</span>
+                <el-switch v-model="coverEnabled" active-color="#13ce66"></el-switch>
+              </div>
+              <span class="image-size">512x636px</span>
               <el-upload
                 class="image-uploader"
                 action="#"
@@ -44,7 +68,9 @@
                 :on-change="handleImageUpload"
                 accept="image/*"
               >
-                <el-button size="small" type="primary">选择图片</el-button>
+                <el-button class="upload-action-btn" type="danger" icon="el-icon-picture-outline">
+                  Add image/design
+                </el-button>
               </el-upload>
               <img
                 ref="previewImage"
@@ -53,7 +79,35 @@
               />
             </div>
 
-            <div class="render-section">
+            <div class="color-control">
+              <div class="control-item">
+                <span class="label">Color:</span>
+                <el-switch v-model="colorEnabled" active-color="#13ce66"></el-switch>
+              </div>
+              <div class="color-picker-wrapper">
+                <el-color-picker v-model="selectedColor" size="small"></el-color-picker>
+                <span class="color-value">#FFFFFF</span>
+              </div>
+            </div>
+
+            <div class="background-control">
+              <div class="control-item">
+                <span class="label">Background:</span>
+                <el-switch v-model="backgroundEnabled" active-color="#13ce66"></el-switch>
+              </div>
+              <div class="format-selector">
+                <el-radio-group v-model="backgroundFormat" size="small">
+                  <el-radio-button label="JPEG"></el-radio-button>
+                  <el-radio-button label="PNG"></el-radio-button>
+                </el-radio-group>
+              </div>
+            </div>
+
+            <el-divider></el-divider>
+
+            <el-button type="primary" class="upgrade-btn">Upgrade to Download</el-button>
+
+            <div class="render-section" style="margin-top: 1rem;">
               <el-button
                 type="primary"
                 @click="handleRender"
@@ -99,6 +153,15 @@ export default {
     return {
       userImage: null, // 存储用户上传的图片对象
       isLoading: false,
+      // 新增的控制选项
+      format: 'PNG',
+      highlights: true,
+      shadows: true,
+      coverEnabled: true,
+      colorEnabled: true,
+      selectedColor: '#FFFFFF',
+      backgroundEnabled: true,
+      backgroundFormat: 'PNG',
       // 模板数据现在直接定义在组件内部
       template: {
         id: 'child-book',
@@ -978,7 +1041,8 @@ export default {
   border: none;
   box-shadow: none;
   border-radius: 0;
-  justify-content: flex-start; /* 功能区域左对齐 */
+  justify-content: center; /* 功能区域居中对齐 */
+  gap: 4rem; /* 增加左右面板之间的间距 */
 }
 
 /* 功能区域内容容器 */
@@ -999,13 +1063,114 @@ export default {
   border-radius: 0;
 }
 
-/* 移除面板标题样式 */
+/* 控制面板特定样式 */
+.control-panel {
+  max-width: 480px;
+  flex-shrink: 0;
+}
+
+/* 结果面板特定样式 */
+.result-panel {
+  max-width: 520px;
+  flex-shrink: 0;
+}
+
+/* 控制面板样式 */
 .panel-header {
-  display: none; /* 隐藏面板标题 */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e4e7ed;
 }
 
 .panel-title {
-  display: none; /* 隐藏面板标题文字 */
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #303133;
+  margin: 0;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.format-selector {
+  display: flex;
+  justify-content: center;
+}
+
+.upgrade-btn {
+  width: 100%;
+  font-weight: bold;
+  background-color: #e6a23c;
+  border-color: #e6a23c;
+}
+
+.upgrade-btn:hover {
+  background-color: #cf9236;
+  border-color: #cf9236;
+}
+
+.control-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.control-item .label {
+  font-weight: 500;
+  color: #606266;
+}
+
+.image-control {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
+}
+
+.image-control .image-size {
+  font-size: 0.8rem;
+  color: #909399;
+  margin-bottom: 0.75rem;
+}
+
+.upload-action-btn {
+  width: 100%;
+  background-color: #f56c6c !important;
+  border-color: #f56c6c !important;
+}
+
+.upload-action-btn:hover {
+  background-color: #f78989 !important;
+  border-color: #f78989 !important;
+}
+
+.color-control {
+  margin-bottom: 1.5rem;
+}
+
+.color-picker-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  margin-left: 1rem;
+}
+
+.color-value {
+  font-family: monospace;
+  font-size: 0.9rem;
+  color: #606266;
+}
+
+.background-control {
+  margin-bottom: 1.5rem;
 }
 
 .upload-section {
@@ -1058,14 +1223,15 @@ export default {
 .vertical-divider {
   width: 1px;
   background-color: #e4e7ed;
-  margin: 0 2rem;
+  margin: 0;
   align-self: stretch;
+  opacity: 0.6;
 }
 
 
 
 .canvas-container {
-  width: 100%;
+  width: 90%;
 }
 
 canvas {
@@ -1091,6 +1257,8 @@ canvas {
   
   .function-section {
     padding: 0 3rem 2rem 3rem; /* 移动端减少左右边距 */
+    flex-direction: column;
+    gap: 2rem;
   }
   
   .unified-content-container {
@@ -1102,6 +1270,11 @@ canvas {
     width: 100%;
     height: 1px;
     margin: 1.5rem 0;
+  }
+  
+  .control-panel,
+  .result-panel {
+    max-width: 100%;
   }
 }
 </style>
