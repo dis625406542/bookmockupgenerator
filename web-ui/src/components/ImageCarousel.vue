@@ -1,7 +1,10 @@
 <template>
   <div class="image-carousel">
     <div class="carousel-header">
-      <span style="font-size: 20px;">More like this</span>
+      <span class="header-title">More like this</span>
+      <el-button type="primary" class="browse-all-btn">
+        Browse all mockups
+      </el-button>
     </div>
     
     <div class="carousel-container">
@@ -34,14 +37,8 @@
       >
         <i class="el-icon-arrow-right"></i>
       </button>
+          </div>
     </div>
-    
-    <div class="browse-all-section">
-      <el-button type="primary" class="browse-all-btn">
-        Browse all mockups
-      </el-button>
-    </div>
-  </div>
 </template>
 
 <script>
@@ -142,11 +139,14 @@ export default {
   background: transparent; /* 移除背景 */
   z-index: 1;
   padding: 0; /* 移除内边距 */
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
-.carousel-header h3 {
-  font-size: 1.5rem; /* 稍微减小字体 */
-  font-weight: 700; /* 调整字重 */
+.header-title {
+  font-size: 20px;
+  font-weight: 600;
   color: #1a1a1a;
   margin: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -266,19 +266,24 @@ export default {
 }
 
 .browse-all-btn {
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important; /* 更柔和的渐变色 */
+  background: #ff6b6b !important; /* 明显的红色背景 */
   border: none !important;
-  padding: 10px 28px !important;
+  color: #ffffff !important; /* 白色文字 */
+  padding: 8px 16px !important;
   font-weight: 600 !important;
-  font-size: 0.9rem !important;
+  font-size: 0.875rem !important;
   border-radius: 6px !important;
-  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2) !important;
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3) !important;
   transition: all 0.3s ease !important;
+  height: auto !important;
+  line-height: 1.4 !important;
+  min-width: 120px !important;
 }
 
 .browse-all-btn:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.3) !important;
+  background: #ff5252 !important; /* 悬停时更深的红色 */
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 16px rgba(255, 107, 107, 0.4) !important;
 }
 
 /* 响应式设计 */
