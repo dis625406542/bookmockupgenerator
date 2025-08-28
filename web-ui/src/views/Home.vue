@@ -77,16 +77,19 @@
                 alt="上传图片预览"
               />
             </div>
-            <el-divider></el-divider>
-            <div class="control-group">
-              <div class="format-selector">
-                <el-radio-group v-model="format" size="small">
-                  <el-radio-button label="JPEG"></el-radio-button>
-                  <el-radio-button label="PNG"></el-radio-button>
-                </el-radio-group>
-              </div>
-              <el-button type="primary" class="upgrade-btn">Upgrade to Download</el-button>
-            </div>
+                         <el-divider></el-divider>
+
+             <div class="render-section" style="margin-top: 1rem;">
+               <el-button
+                 type="primary"
+                 @click="handleRender"
+                 :loading="isLoading"
+                 :disabled="!userImage"
+                 class="render-button"
+               >
+                 {{ isLoading ? '正在渲染...' : '2. 渲染封面（智能合成手部遮罩）' }}
+               </el-button>
+             </div>
           </div>
         </div>
       </div>
