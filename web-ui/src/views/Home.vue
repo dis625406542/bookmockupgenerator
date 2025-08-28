@@ -20,8 +20,7 @@
             </div>
           </div>
 
-          <!-- 垂直分割线 -->
-          <div class="vertical-divider"></div>
+
 
           <!-- 控制面板 (移到右边) -->
           <div class="control-panel">
