@@ -13,9 +13,7 @@
           :class="{ active: currentIndex === index }"
         >
           <div class="item-image">
-            <div class="mockup-placeholder">
-              <span>YOUR IMAGE HERE</span>
-            </div>
+            <img :src="bookImage" alt="Book mockup" class="mockup-image" />
           </div>
           <div class="item-title">{{ item.title }}</div>
         </div>
@@ -47,6 +45,9 @@
 </template>
 
 <script>
+// 导入 book5.jpg 图片
+import bookImage from '@/assets/images/book5.jpg';
+
 export default {
   name: 'ImageCarousel',
   data() {
@@ -54,6 +55,7 @@ export default {
       currentIndex: 0,
       translateX: 0,
       autoPlayInterval: null,
+      bookImage: bookImage, // 添加图片数据
       carouselItems: [
         {
           title: 'Square Paperback Book Cover Mockup for Indie Author Branding'
@@ -195,18 +197,16 @@ export default {
   justify-content: center;
 }
 
+.mockup-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
 .carousel-item:hover .item-image {
   border-color: #e0e0e0; /* 悬停时稍微深一点的边框 */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); /* 更淡的阴影 */
-}
-
-.mockup-placeholder {
-  color: #9ca3af; /* 更淡的文字颜色 */
-  font-size: 0.8rem;
-  font-weight: 500;
-  text-align: center;
-  padding: 1rem;
-  line-height: 1.4;
 }
 
 .item-title {
