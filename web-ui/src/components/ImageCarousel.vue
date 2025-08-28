@@ -25,7 +25,7 @@
       <button 
         class="carousel-arrow carousel-arrow-left" 
         @click="prevSlide"
-        :disabled="currentIndex === 0"
+        :disabled="isLeftDisabled"
       >
         <i class="el-icon-arrow-left"></i>
       </button>
@@ -33,7 +33,7 @@
       <button 
         class="carousel-arrow carousel-arrow-right" 
         @click="nextSlide"
-        :disabled="currentIndex === carouselItems.length - 1"
+        :disabled="isRightDisabled"
       >
         <i class="el-icon-arrow-right"></i>
       </button>
@@ -53,6 +53,9 @@ export default {
       translateX: 0,
       autoPlayInterval: null,
       bookImage: bookImage, // 添加图片数据
+      // 分页滑动配置
+      itemsPerPage: 4, // 每次滑动4个图片
+      visibleItems: 5, // 同时显示5个图片
       carouselItems: [
         {
           title: 'Square Paperback Book Cover Mockup for Indie Author Branding'
@@ -71,12 +74,49 @@ export default {
         },
         {
           title: 'Book Table Mockup with Bookshelf Background'
+        },
+        {
+          title: 'Book Cover Mockup on Top of Table in a Modern Home'
+        },
+        {
+          title: 'Stacked Book Cover Mockup for Fiction and Thrillers'
+        },
+        {
+          title: 'Top View of Simple Book Cover Mockup'
+        },
+        {
+          title: 'Two Book Covers Mockup on Wooden Shelf'
+        },
+        {
+          title: 'Top View of Book Cover Mockup with Aesthetic Floor'
+        },
+        {
+          title: 'Professional Book Cover Mockup for Business Books'
         }
       ]
     }
   },
+  computed: {
+    // 计算最大页数
+    maxPage() {
+      return Math.ceil(this.carouselItems.length / this.itemsPerPage);
+    },
+    // 计算当前页数
+    currentPage() {
+      return Math.floor(this.currentIndex / this.itemsPerPage);
+    },
+    // 左箭头是否禁用
+    isLeftDisabled() {
+      return this.currentPage === 0;
+    },
+    // 右箭头是否禁用
+    isRightDisabled() {
+      return this.currentPage >= this.maxPage - 1;
+    }
+  },
   mounted() {
-    this.startAutoPlay();
+    // 移除自动播放
+    // this.startAutoPlay();
   },
   beforeDestroy() {
     this.stopAutoPlay();
@@ -93,21 +133,21 @@ export default {
         this.autoPlayInterval = null;
       }
     },
+    // 下一页（向右滑动）
     nextSlide() {
-      if (this.currentIndex < this.carouselItems.length - 1) {
-        this.currentIndex++;
-      } else {
-        this.currentIndex = 0;
+      const nextPage = this.currentPage + 1;
+      if (nextPage < this.maxPage) {
+        this.currentIndex = nextPage * this.itemsPerPage;
+        this.updateTranslateX();
       }
-      this.updateTranslateX();
     },
+    // 上一页（向左滑动）
     prevSlide() {
-      if (this.currentIndex > 0) {
-        this.currentIndex--;
-      } else {
-        this.currentIndex = this.carouselItems.length - 1;
+      const prevPage = this.currentPage - 1;
+      if (prevPage >= 0) {
+        this.currentIndex = prevPage * this.itemsPerPage;
+        this.updateTranslateX();
       }
-      this.updateTranslateX();
     },
     goToSlide(index) {
       this.currentIndex = index;
@@ -255,7 +295,7 @@ export default {
 }
 
 .carousel-arrow-right {
-  right: 10px;
+  right: calc(2 * 200px + 2 * 20px + 20px); /* 放在第5张图片上面，红圈位置 */
 }
 
 .browse-all-section {
