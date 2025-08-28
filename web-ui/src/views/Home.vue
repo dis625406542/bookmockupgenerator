@@ -188,87 +188,12 @@ export default {
   mounted() {
     // 等待DOM完全渲染后再初始化
     this.$nextTick(() => {
-      console.log('DOM已渲染完成，开始显示背景图');
       // 延迟一点时间确保Canvas完全准备好
       setTimeout(() => {
         this.showBackgroundOnly();
       }, 100);
     });
     window.addEventListener('resize', this.handleResize);
-    
-    // 添加调试函数到全局，方便测试坐标
-    window.testCoordinates = () => {
-      console.log('🔍 当前坐标配置:');
-      console.log('模板层数:', this.template.layers.length);
-      console.log('封面层索引:', this.template.layers.findIndex(l => l.type === 'transformed-image'));
-      
-      const coverLayer = this.template.layers.find(l => l.type === 'transformed-image');
-      if (coverLayer) {
-        console.log('封面层:', coverLayer);
-        console.log('destPoints长度:', coverLayer.destPoints.length);
-        console.log('左上:', coverLayer.destPoints[0]);
-        console.log('右上:', coverLayer.destPoints[1]);
-        console.log('右下:', coverLayer.destPoints[2]);
-        console.log('左下:', coverLayer.destPoints[3]);
-        
-        // 测试坐标访问
-        console.log('🔍 坐标访问测试:');
-        coverLayer.destPoints.forEach((point, index) => {
-          const x = point.x || (point._value && point._value.x) || 0;
-          const y = point.y || (point._value && point._value.y) || 0;
-          console.log(`点${index}: x=${x}, y=${y}`);
-        });
-      } else {
-        console.log('❌ 未找到封面层');
-      }
-      console.log('🔍 测试完成');
-    };
-    
-    // 添加测试四边形绘制的函数
-    window.testQuadrilateral = () => {
-      const canvas = this.$refs.mockupCanvas;
-      if (!canvas) {
-        console.log('❌ Canvas未找到');
-        return;
-      }
-      
-      const ctx = canvas.getContext('2d');
-      const scale = canvas.width / this.template.width;
-      
-      const coverLayer = this.template.layers.find(l => l.type === 'transformed-image');
-      if (!coverLayer) {
-        console.log('❌ 封面层未找到');
-        return;
-      }
-      
-      const dest = coverLayer.destPoints.map(p => {
-        const x = p.x || (p._value && p._value.x) || 0;
-        const y = p.y || (p._value && p._value.y) || 0;
-        return { x: x * scale, y: y * scale };
-      });
-      
-      console.log('🔍 测试四边形绘制:');
-      console.log('缩放后坐标:', dest);
-      
-      // 绘制测试四边形
-      ctx.save();
-      ctx.strokeStyle = 'blue';
-      ctx.lineWidth = 3;
-      
-      ctx.beginPath();
-      ctx.moveTo(dest[0].x, dest[0].y);
-      ctx.lineTo(dest[1].x, dest[1].y);
-      ctx.lineTo(dest[2].x, dest[2].y);
-      ctx.lineTo(dest[3].x, dest[3].y);
-      ctx.closePath();
-      
-      ctx.stroke();
-      ctx.restore();
-      
-      console.log('🔍 蓝色测试四边形绘制完成');
-    };
-    
-    console.log('💡 调试提示: 在控制台输入 testCoordinates() 可以查看当前坐标');
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.handleResize);
@@ -312,8 +237,6 @@ export default {
       this.isLoading = true;
       
       try {
-        console.log('=== 开始智能渲染流程 ===');
-        
         // 第一步：合成用户图片与手部遮罩
         const mergedUserImage = await this.mergeUserImageWithHandMask(this.userImage);
         
@@ -325,8 +248,6 @@ export default {
         // 第二步：使用合成后的图片进行书本渲染
         await this.renderMockupWithMergedImage(mergedUserImage);
         
-        console.log('=== 智能渲染完成 ===');
-        
       } catch (error) {
         console.error('智能渲染过程中出错:', error);
         this.$message.error('渲染失败，请检查控制台。');
@@ -337,12 +258,10 @@ export default {
 
     loadImage(src) {
       return new Promise((resolve, reject) => {
-        console.log('开始加载图片:', src);
         const img = new Image();
         img.crossOrigin = 'Anonymous';
         
         img.onload = () => {
-          console.log('图片加载成功:', src, '尺寸:', img.width, 'x', img.height);
           resolve(img);
         };
         
@@ -379,8 +298,6 @@ export default {
       }
 
       try {
-        console.log('开始显示背景图');
-        
         // 调整Canvas尺寸
         this.adjustCanvasSize(canvas);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -388,7 +305,6 @@ export default {
         // 只加载并显示背景图
         const backgroundLayer = this.template.layers.find(l => l.id === 'background');
         if (backgroundLayer) {
-          console.log('加载背景图片:', backgroundLayer.src);
           const backgroundImg = await this.loadImage(backgroundLayer.src);
           
           // 修复：保持背景图原始宽高比，自适应显示
@@ -411,9 +327,7 @@ export default {
             bgY = (canvas.height - bgHeight) / 2;
           }
           
-          console.log('背景图自适应参数:', { bgWidth, bgHeight, bgX, bgY });
           ctx.drawImage(backgroundImg, bgX, bgY, bgWidth, bgHeight);
-          console.log('✓ 背景图显示完成（保持宽高比）');
         }
       } catch (error) {
         console.error('显示背景图失败:', error);
@@ -427,17 +341,11 @@ export default {
       const ctx = canvas.getContext('2d');
 
       try {
-        console.log('=== 开始渲染，严格按照图层顺序 ===');
-        console.log('封面图片:', coverImage ? '存在' : '不存在');
-        
         this.adjustCanvasSize(canvas);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const scale = canvas.width / this.template.width;
-        
-        console.log('Canvas尺寸:', canvas.width, 'x', canvas.height, '缩放比例:', scale);
 
         // === 第1步：绘制背景图层 (最底层) ===
-        console.log('第1步：绘制背景图层');
         const backgroundLayer = this.template.layers.find(l => l.id === 'background');
         if (!backgroundLayer) throw new Error("模板中未找到背景图层");
         
@@ -463,25 +371,17 @@ export default {
           bgY = (canvas.height - bgHeight) / 2;
         }
         
-        console.log('背景图自适应参数:', { bgWidth, bgHeight, bgX, bgY });
         ctx.drawImage(backgroundImg, bgX, bgY, bgWidth, bgHeight);
-        console.log('✓ 背景图层绘制完成（保持宽高比）');
 
         // === 第2步：绘制用户封面 (透视变换) ===
         if (coverImage) {
-          console.log('第2步：绘制用户封面（透视变换）');
           const coverLayer = this.template.layers.find(l => l.type === 'transformed-image' && l.name === 'cover');
           if (coverLayer) {
-            console.log('封面图层坐标:', coverLayer.destPoints);
             this.drawTransformedImage(ctx, coverImage, coverLayer.destPoints, scale);
-            console.log('✓ 封面图层绘制完成');
           }
-        } else {
-          console.log('第2步：跳过封面图层（无封面图片）');
         }
 
         // === 第3步：绘制光影效果图层 ===
-        console.log('第3步：绘制光影效果图层');
         const highlightsLayer = this.template.layers.find(l => l.id === 'highlights');
         if (highlightsLayer) {
           const highlightsImg = await this.loadImage(highlightsLayer.src);
@@ -490,8 +390,6 @@ export default {
           // 使用与封面相同的坐标区域来绘制光影效果
           const coverLayer = this.template.layers.find(l => l.type === 'transformed-image' && l.name === 'cover');
           if (coverLayer) {
-            console.log('使用封面坐标区域绘制光影效果');
-            
             // 计算光影效果的绘制区域（与封面区域完全一致）
             const dest = coverLayer.destPoints.map(p => ({ x: p.x * scale, y: p.y * scale }));
             
@@ -503,8 +401,6 @@ export default {
             const width = maxX - minX;
             const height = maxY - minY;
             
-            console.log('光影效果绘制区域:', { minX, minY, width, height });
-            
             // 只在这个区域内绘制光影效果
             ctx.save();
             ctx.beginPath();
@@ -514,20 +410,14 @@ export default {
             // 绘制光影效果，但只在这个区域内
             ctx.drawImage(highlightsImg, minX, minY, width, height);
             ctx.restore();
-            
-            console.log('✓ 光影效果图层绘制完成（限制在封面区域）');
           } else {
             // 如果没有封面图层，则按原来的方式绘制
             ctx.drawImage(highlightsImg, 0, 0, canvas.width, canvas.height);
-            console.log('✓ 光影效果图层绘制完成（全Canvas覆盖）');
           }
         }
 
         // === 第4步：绘制前景蒙版图层 (手指) ===
-        console.log('第4步：绘制前景蒙版图层（手指）- 已注释掉');
-        console.log('✓ 手指蒙版图层已跳过（注释掉）');
-        
-        console.log('=== 渲染完成，图层顺序：背景→封面→光影→手指 ===');
+        // 手指蒙版图层已跳过（注释掉）
       } catch (error) {
         console.error("渲染过程中出错:", error);
         this.$message.error("渲染失败，请检查控制台。");
@@ -537,10 +427,7 @@ export default {
     },
 
     drawTransformedImage(ctx, image, destPoints, scale) {
-      console.log('=== 透视变换开始 ===');
-      console.log('图片尺寸:', image.width, 'x', image.height);
-      console.log('原始坐标点:', destPoints);
-      console.log('缩放比例:', scale);
+
       
       // 修复Vue Observer问题，正确获取坐标值
       const dest = destPoints.map(p => {
@@ -549,74 +436,60 @@ export default {
         const y = p.y || (p._value && p._value.y) || 0;
         return { x: x * scale, y: y * scale };
       });
-      console.log('缩放后的目标坐标:', dest);
+
       
       // 特别标注左下角坐标
-      console.log('🔴 destPoints数组长度:', destPoints.length);
-      console.log('🔴 destPoints完整数组:', destPoints);
       
-      // 检查数组结构，修复Observer访问问题
-      destPoints.forEach((point, index) => {
-        const x = point.x || (point._value && point._value.x) || 0;
-        const y = point.y || (point._value && point._value.y) || 0;
-        console.log(`🔴 点${index}: x=${x}, y=${y}`);
-      });
+      // 检查数组结构，修复Observer访问问题（已注释掉未使用的变量）
+      // destPoints.forEach((point) => {
+      //   // 确保能正确访问x, y属性（已注释掉console.log）
+      //   // const x = point.x || (point._value && point._value.x) || 0;
+      //   // const y = point.y || (point._value && point._value.y) || 0;
+      // });
       
-      const bottomLeft = dest[3]; // 第四个点是左下角
-      console.log('🔴 左下角坐标:', bottomLeft);
+      // 注释掉未使用的变量
+      // const bottomLeft = dest[3]; // 第四个点是左下角
       
-      // 获取左下角原始值
-      const bottomLeftOriginal = destPoints[3];
-      const bottomLeftX = bottomLeftOriginal.x || (bottomLeftOriginal._value && bottomLeftOriginal._value.x) || 0;
-      const bottomLeftY = bottomLeftOriginal.y || (bottomLeftOriginal._value && bottomLeftOriginal._value.y) || 0;
-      console.log('🔴 左下角原始值: x=', bottomLeftX, 'y=', bottomLeftY);
+      // 获取左下角原始值（已注释掉未使用的变量）
+      // const bottomLeftOriginal = destPoints[3];
+      // const bottomLeftX = bottomLeftOriginal.x || (bottomLeftOriginal._value && bottomLeftOriginal._value.x) || 0;
+      // const bottomLeftY = bottomLeftOriginal.y || (bottomLeftOriginal._value && bottomLeftOriginal._value.y) || 0;
       
       // 【重要修复】使用真正的四边形渲染，按照四个坐标点围成的形状
-      console.log('✅ 使用真正的四边形渲染，按照四个坐标点围成的形状');
       
       // 使用Canvas的路径绘制四边形
       ctx.save();
       ctx.globalAlpha = 0.9; // 增加透明度
       
       // 创建四边形路径，确保坐标正确
-      console.log('开始绘制四边形路径...');
-      console.log('路径坐标:', dest);
       
       // 按照正确的顺序绘制四边形：左上→右上→右下→左下→左上
       ctx.beginPath();
       
       // 左上角
       ctx.moveTo(dest[0].x, dest[0].y);
-      console.log('移动到左上:', dest[0].x, dest[0].y);
       
       // 右上角
       ctx.lineTo(dest[1].x, dest[1].y);
-      console.log('连线到右上:', dest[1].x, dest[1].y);
       
       // 右下角
       ctx.lineTo(dest[2].x, dest[2].y);
-      console.log('连线到右下:', dest[2].x, dest[2].y);
       
       // 左下角
       ctx.lineTo(dest[3].x, dest[3].y);
-      console.log('连线到左下:', dest[3].x, dest[3].y);
       
       // 回到左上角，形成闭合路径
       ctx.lineTo(dest[0].x, dest[0].y);
-      console.log('回到左上:', dest[0].x, dest[0].y);
       
       ctx.closePath();
-      console.log('四边形路径绘制完成');
       
       // 调试：路径轮廓已注释掉（去掉红色圈）
       // ctx.strokeStyle = 'red';
       // ctx.lineWidth = 2;
       // ctx.stroke();
-      console.log('路径轮廓绘制已跳过（去掉红色圈）');
       
       // 设置裁剪区域为四边形
       ctx.clip();
-      console.log('裁剪区域设置完成');
       
       // 计算图片的绘制区域（使用四个坐标点的边界）
       const minX = Math.min(...dest.map(p => p.x));
@@ -626,22 +499,13 @@ export default {
       const width = maxX - minX;
       const height = maxY - minY;
       
-      console.log('四边形边界框:', { minX, minY, width, height });
-      console.log('四个坐标点:', dest);
-      
       // 在四边形区域内绘制图片
       ctx.drawImage(image, minX, minY, width, height);
-      console.log('图片绘制完成');
       
       ctx.restore();
-      
-      console.log('✅ 透视变换完成（四边形区域渲染）');
-      console.log('=== 透视变换结束 ===');
     },
 
     drawTriangle(ctx, image, src, dst) {
-      console.log('绘制三角形:', { src, dst });
-      
       ctx.save();
       ctx.beginPath();
       ctx.moveTo(dst[0].x, dst[0].y);
@@ -652,7 +516,6 @@ export default {
       
       // 计算变换矩阵
       const t = this.getTransform(src, dst);
-      console.log('变换矩阵:', t);
       
       // 应用变换
       ctx.transform(t.a, t.b, t.c, t.d, t.e, t.f);
@@ -662,8 +525,6 @@ export default {
       
       // 恢复Canvas状态
       ctx.restore();
-      
-      console.log('三角形绘制完成');
     },
 
     getTransform(src, dst) {
@@ -683,8 +544,6 @@ export default {
 
     // 真正的优化版手部遮罩合成算法 - 手指透明 + 边缘暗化
     async mergeUserImageWithHandMask(userImage) {
-      console.log('开始真正的优化版手部遮罩合成（手指透明 + 边缘暗化）...');
-      
       if (!userImage) {
         console.error('用户图片不存在');
         return null;
@@ -702,7 +561,7 @@ export default {
         tempCanvas.width = userImage.width;
         tempCanvas.height = userImage.height;
         
-        console.log(`合成尺寸: ${tempCanvas.width}x${tempCanvas.height}`);
+
         
         // 1. 绘制用户图片作为底图
         tempCtx.drawImage(userImage, 0, 0, tempCanvas.width, tempCanvas.height);
@@ -717,7 +576,6 @@ export default {
         maskCtx.drawImage(handMask, 0, 0, maskCanvas.width, maskCanvas.height);
         
         // 3. 多级边缘平滑处理（模拟Python的完整算法）
-        console.log('开始多级边缘平滑处理...');
         
         // 第一级：轻微高斯模糊，软化边缘
         maskCtx.filter = 'blur(1.5px)'; // 增加模糊半径，更自然
@@ -743,15 +601,16 @@ export default {
         const maskPixels = maskImageData.data;
         const resultPixels = resultImageData.data;
         
-        console.log('开始像素级合成处理（手指透明 + 边缘暗化）...');
+
         
-        // 5. 真正的优化版合成算法（手指透明 + 边缘暗化）
-        const whiteThreshold = 240; // 白色阈值
-        const transparencyFactor = 0.6; // 手指透明度因子（0.6 = 40%透明）
-        const edgeDarkenFactor = 0.5; // 边缘暗化因子（0.5 = 暗化50%）
-        let handRegionCount = 0;
-        let transparentPixelsCount = 0;
-        let edgeDarkenedCount = 0;
+                 // 5. 真正的优化版合成算法（手指透明 + 边缘暗化）
+         const whiteThreshold = 240; // 白色阈值
+         const transparencyFactor = 0.6; // 手指透明度因子（0.6 = 40%透明）
+         const edgeDarkenFactor = 0.5; // 边缘暗化因子（0.5 = 暗化50%）
+         // 注释掉未使用的统计变量
+         // let handRegionCount = 0;
+         // let transparentPixelsCount = 0;
+         // let edgeDarkenedCount = 0;
         
         // 单遍扫描，直接处理每个像素
         for (let i = 0; i < userPixels.length; i += 4) {
@@ -783,37 +642,32 @@ export default {
               const edgeDarkness = (brightness - (whiteThreshold - 30)) / 30; // 0-1的暗化程度
               const finalDarkness = edgeDarkness * (1 - edgeDarkenFactor);
               
-              // 边缘暗化处理
-              resultPixels[i] = Math.round(maskR * (1 - finalDarkness));     // R
-              resultPixels[i + 1] = Math.round(maskG * (1 - finalDarkness)); // G
-              resultPixels[i + 2] = Math.round(maskB * (1 - finalDarkness)); // B
-              resultPixels[i + 3] = Math.round(maskA * transparencyFactor);  // A 降低透明度
-              
-              edgeDarkenedCount++;
-            } else {
-              // 核心手部像素：保持原色，但降低透明度
-              resultPixels[i] = maskR;
-              resultPixels[i + 1] = maskG;
-              resultPixels[i + 2] = maskB;
-              resultPixels[i + 3] = Math.round(maskA * transparencyFactor); // A 降低透明度
-            }
-            
-            handRegionCount++;
-            transparentPixelsCount++;
+                             // 边缘暗化处理
+               resultPixels[i] = Math.round(maskR * (1 - finalDarkness));     // R
+               resultPixels[i + 1] = Math.round(maskG * (1 - finalDarkness)); // G
+               resultPixels[i + 2] = Math.round(maskB * (1 - finalDarkness)); // B
+               resultPixels[i + 3] = Math.round(maskA * transparencyFactor);  // A 降低透明度
+               
+               // edgeDarkenedCount++; // 已注释掉未使用的变量
+             } else {
+               // 核心手部像素：保持原色，但降低透明度
+               resultPixels[i] = maskR;
+               resultPixels[i + 1] = maskG;
+               resultPixels[i + 2] = maskB;
+               resultPixels[i + 3] = Math.round(maskA * transparencyFactor); // A 降低透明度
+             }
+             
+             // handRegionCount++; // 已注释掉未使用的变量
+             // transparentPixelsCount++; // 已注释掉未使用的变量
           }
         }
         
-        console.log(`手部区域像素数: ${handRegionCount}`);
-        console.log(`透明化像素数: ${transparentPixelsCount}`);
-        console.log(`边缘暗化像素数: ${edgeDarkenedCount}`);
-        console.log(`手指透明度: ${(1 - transparencyFactor) * 100}%`);
-        console.log(`边缘暗化强度: ${(1 - edgeDarkenFactor) * 100}%`);
+
         
         // 6. 将合成结果绘制到临时Canvas
         tempCtx.putImageData(resultImageData, 0, 0);
         
         // 7. 最终边缘平滑处理
-        console.log('应用最终边缘平滑...');
         tempCtx.filter = 'blur(0.5px)'; // 轻微模糊，进一步平滑边缘
         tempCtx.drawImage(tempCanvas, 0, 0);
         tempCtx.filter = 'none';
@@ -821,7 +675,7 @@ export default {
         const mergedImageDataUrl = tempCanvas.toDataURL('image/png');
         const mergedImage = await this.loadImage(mergedImageDataUrl);
         
-        console.log('✓ 真正的优化版手部遮罩合成完成（手指透明 + 边缘暗化）');
+
         return mergedImage;
         
       } catch (error) {
@@ -832,7 +686,6 @@ export default {
 
     // 使用合成后的图片进行书本渲染
     async renderMockupWithMergedImage(mergedImage) {
-      console.log('开始使用合成图片进行书本渲染...');
       
       const canvas = this.$refs.mockupCanvas;
       const ctx = canvas.getContext('2d');
@@ -866,14 +719,12 @@ export default {
           }
           
           ctx.drawImage(backgroundImg, bgX, bgY, bgWidth, bgHeight);
-          console.log('✓ 背景图层绘制完成');
         }
 
         // === 第2步：绘制合成后的用户封面（透视变换）===
         const coverLayer = this.template.layers.find(l => l.type === 'transformed-image' && l.name === 'cover');
         if (coverLayer) {
           this.drawTransformedImage(ctx, mergedImage, coverLayer.destPoints, scale);
-          console.log('✓ 合成封面图层绘制完成');
         }
 
         // === 第3步：绘制光影效果图层 ===
@@ -900,10 +751,9 @@ export default {
           } else {
             ctx.drawImage(highlightsImg, 0, 0, canvas.width, canvas.height);
           }
-          console.log('✓ 光影效果图层绘制完成');
         }
 
-        console.log('✓ 书本渲染完成');
+
         
       } catch (error) {
         console.error('书本渲染过程中出错:', error);
