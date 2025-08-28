@@ -1231,7 +1231,7 @@ export default {
 
 
 .canvas-container {
-  width: 90%;
+  width: 95%;
 }
 
 canvas {
