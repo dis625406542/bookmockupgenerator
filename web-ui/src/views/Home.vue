@@ -69,7 +69,7 @@
                   <el-radio-button label="PNG"></el-radio-button>
                 </el-radio-group>
               </div>
-              <el-button type="primary" class="upgrade-btn">Upgrade to Download</el-button>
+              <el-button type="primary" class="upgrade-btn" @click="downloadRenderedImage">Upgrade to Download</el-button>
             </div>
 
             <el-divider></el-divider>
@@ -92,37 +92,38 @@
                 <el-switch v-model="coverEnabled" active-color="#13ce66"></el-switch>
               </div>
               <span class="image-size">512x636px</span>
-              <el-upload
-                class="image-uploader"
-                action="#"
-                :auto-upload="false"
-                :show-file-list="false"
-                :on-change="handleImageUpload"
-                accept="image/*"
+              <el-button 
+                class="upload-action-btn" 
+                type="danger" 
+                icon="el-icon-picture-outline"
+                @click="openImageModal"
               >
-                <el-button class="upload-action-btn" type="danger" icon="el-icon-picture-outline">
-                  Add image/design
-                </el-button>
-              </el-upload>
-              <img
-                ref="previewImage"
-                class="preview-image"
-                alt="上传图片预览"
-              />
+                Add image/design
+              </el-button>
+              
             </div>
             <el-divider></el-divider>
-
-            <div class="render-section" style="margin-top: 1rem;">
-              <el-button
-                type="primary"
-                @click="handleRender"
-                :loading="isLoading"
-                :disabled="!userImage"
-                class="render-button"
-              >
-                {{ isLoading ? '正在渲染...' : '2. 渲染封面（智能合成手部遮罩）' }}
-              </el-button>
+            <div class="control-group">
+              <div class="format-selector">
+                <el-radio-group v-model="format" size="small">
+                  <el-radio-button label="JPEG"></el-radio-button>
+                  <el-radio-button label="PNG"></el-radio-button>
+                </el-radio-group>
+              </div>
+              <el-button type="primary" class="upgrade-btn" @click="downloadRenderedImage">Upgrade to Download</el-button>
             </div>
+
+<!--            <div class="render-section" style="margin-top: 1rem;">-->
+<!--              <el-button-->
+<!--                type="primary"-->
+<!--                @click="handleRender"-->
+<!--                :loading="isLoading"-->
+<!--                :disabled="!userImage"-->
+<!--                class="render-button"-->
+<!--              >-->
+<!--                {{ isLoading ? '正在渲染...' : '2. 渲染封面（智能合成手部遮罩）' }}-->
+<!--              </el-button>-->
+<!--            </div>-->
           </div>
         </div>
 
@@ -133,6 +134,13 @@
 
       </div>
     </div>
+
+    <!-- 图片上传弹窗 -->
+    <ImageUploadModal 
+      :visible="showImageModal"
+      @close="closeImageModal"
+      @confirm="handleModalConfirm"
+    />
   </div>
 </template>
 
@@ -147,7 +155,8 @@ export default {
   components: {
     Header: () => import('@/components/Header.vue'),
     PageHeader: () => import('@/components/PageHeader.vue'),
-    ImageCarousel: () => import('@/components/ImageCarousel.vue')
+    ImageCarousel: () => import('@/components/ImageCarousel.vue'),
+    ImageUploadModal: () => import('@/components/ImageUploadModal.vue')
   },
   data() {
     return {
@@ -162,6 +171,8 @@ export default {
       selectedColor: '#FFFFFF',
       backgroundEnabled: true,
       backgroundFormat: 'PNG',
+      // 弹窗状态
+      showImageModal: false,
       // 模板数据现在直接定义在组件内部
       template: {
         id: 'child-book',
@@ -223,6 +234,44 @@ export default {
       }
     },
 
+    // 打开图片上传弹窗
+    openImageModal() {
+      this.showImageModal = true;
+    },
+
+    // 关闭图片上传弹窗
+    closeImageModal() {
+      this.showImageModal = false;
+    },
+
+    // 处理弹窗确认
+    handleModalConfirm(data) {
+      // 将弹窗中的图片数据转换为 Image 对象
+      const img = new Image();
+      img.onload = () => {
+        this.userImage = img;
+        // 显示预览图片
+        if (this.$refs.previewImage) {
+          this.$refs.previewImage.src = data.image;
+          this.$refs.previewImage.style.display = 'block';
+        }
+        // 这里可以保存缩放和位置信息，用于后续渲染
+        console.log('弹窗确认数据:', data);
+        
+        // 检查是否需要自动渲染
+        if (data.autoRender) {
+          console.log('检测到自动渲染标记，开始渲染封面...');
+          // 延迟一点时间确保图片加载完成，然后自动触发渲染
+          this.$nextTick(() => {
+            setTimeout(() => {
+              this.handleRender();
+            }, 100);
+          });
+        }
+      };
+      img.src = data.image;
+    },
+
     handleRender() {
       if (!this.userImage) {
         this.$message.warning('请先上传一张封面图片！');
@@ -237,15 +286,23 @@ export default {
       this.isLoading = true;
       
       try {
-        // 第一步：合成用户图片与手部遮罩
-        const mergedUserImage = await this.mergeUserImageWithHandMask(this.userImage);
+        // 第一步：先将用户图片拉伸到书本封面尺寸
+        const stretchedUserImage = await this.stretchImageToCoverSize(this.userImage);
+        
+        if (!stretchedUserImage) {
+          this.$message.error('图片拉伸失败，请重试！');
+          return;
+        }
+        
+        // 第二步：拉伸后的图片与手部遮罩合成
+        const mergedUserImage = await this.mergeUserImageWithHandMask(stretchedUserImage);
         
         if (!mergedUserImage) {
           this.$message.error('图片合成失败，请重试！');
           return;
         }
         
-        // 第二步：使用合成后的图片进行书本渲染
+        // 第三步：使用合成后的图片进行书本渲染
         await this.renderMockupWithMergedImage(mergedUserImage);
         
       } catch (error) {
@@ -416,8 +473,6 @@ export default {
           }
         }
 
-        // === 第4步：绘制前景蒙版图层 (手指) ===
-        // 手指蒙版图层已跳过（注释掉）
       } catch (error) {
         console.error("渲染过程中出错:", error);
         this.$message.error("渲染失败，请检查控制台。");
@@ -540,7 +595,52 @@ export default {
       };
     },
 
+    // 将用户图片拉伸到书本封面尺寸
+    async stretchImageToCoverSize(userImage) {
+      if (!userImage) {
+        console.error('用户图片不存在');
+        return null;
+      }
 
+      try {
+        // 获取模板中封面图层的目标尺寸
+        const coverLayer = this.template.layers.find(l => l.type === 'transformed-image' && l.name === 'cover');
+        if (!coverLayer) {
+          console.error('未找到封面图层配置');
+          return userImage;
+        }
+
+        // 计算封面图层的实际尺寸（基于destPoints）
+        const destPoints = coverLayer.destPoints;
+        const minX = Math.min(...destPoints.map(p => p.x));
+        const minY = Math.min(...destPoints.map(p => p.y));
+        const maxX = Math.max(...destPoints.map(p => p.x));
+        const maxY = Math.max(...destPoints.map(p => p.y));
+        const coverWidth = maxX - minX;
+        const coverHeight = maxY - minY;
+
+        // 创建临时Canvas进行拉伸
+        const tempCanvas = document.createElement('canvas');
+        const tempCtx = tempCanvas.getContext('2d');
+        
+        // 设置Canvas尺寸为封面尺寸
+        tempCanvas.width = coverWidth;
+        tempCanvas.height = coverHeight;
+        
+        // 将用户图片拉伸到封面尺寸
+        tempCtx.drawImage(userImage, 0, 0, coverWidth, coverHeight);
+        
+        // 转换为Image对象并返回
+        const stretchedImageDataUrl = tempCanvas.toDataURL('image/png');
+        const stretchedImage = await this.loadImage(stretchedImageDataUrl);
+        
+        return stretchedImage;
+        
+      } catch (error) {
+        console.error('图片拉伸过程中出错:', error);
+        return null;
+      }
+    },
 
     // 真正的优化版手部遮罩合成算法 - 手指透明 + 边缘暗化
     async mergeUserImageWithHandMask(userImage) {
@@ -667,10 +767,10 @@ export default {
         // 6. 将合成结果绘制到临时Canvas
         tempCtx.putImageData(resultImageData, 0, 0);
         
-        // 7. 最终边缘平滑处理
-        tempCtx.filter = 'blur(0.5px)'; // 轻微模糊，进一步平滑边缘
-        tempCtx.drawImage(tempCanvas, 0, 0);
-        tempCtx.filter = 'none';
+        // 7. 最终边缘平滑处理 - 暂时注释掉模糊处理，保持手指清晰度
+        // tempCtx.filter = 'blur(0.5px)'; // 轻微模糊，进一步平滑边缘
+        // tempCtx.drawImage(tempCanvas, 0, 0);
+        // tempCtx.filter = 'none';
         
         const mergedImageDataUrl = tempCanvas.toDataURL('image/png');
         const mergedImage = await this.loadImage(mergedImageDataUrl);
@@ -759,6 +859,46 @@ export default {
         console.error('书本渲染过程中出错:', error);
         throw error;
       }
+    },
+
+    // 下载渲染后的图片
+    async downloadRenderedImage() {
+      const canvas = this.$refs.mockupCanvas;
+      if (!canvas) {
+        this.$message.error('没有可下载的图片');
+        return;
+      }
+      
+      // 生成带时间戳的文件名
+      const now = new Date();
+      const timestamp = now.getHours().toString().padStart(2, '0') + 
+                       now.getMinutes().toString().padStart(2, '0') + 
+                       now.getSeconds().toString().padStart(2, '0');
+      
+      // 根据选择的格式决定输出格式和质量
+      let dataURL, filename;
+      if (this.format === 'PNG') {
+        dataURL = canvas.toDataURL('image/png');
+        filename = `book-mockup-${timestamp}.png`;
+      } else {
+        dataURL = canvas.toDataURL('image/jpeg', 0.9);
+        filename = `book-mockup-${timestamp}.jpg`;
+      }
+      
+      // 创建下载链接并触发下载
+      this.triggerDownload(dataURL, filename);
+    },
+
+    // 触发下载
+    triggerDownload(dataURL, filename) {
+      const link = document.createElement('a');
+      link.href = dataURL;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      this.$message.success(`Image downloaded successfully: ${filename}`);
     },
   },
 };
@@ -1076,12 +1216,7 @@ export default {
   margin-bottom: 1rem;
 }
 
-.preview-image {
-  max-height: 160px;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  display: none;
-}
+
 
 .render-section {
   margin-bottom: 2rem;
