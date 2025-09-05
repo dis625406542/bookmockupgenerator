@@ -8,7 +8,7 @@
       <div class="unified-content-container">
         <!-- 标题区域 -->
         <div class="header-section">
-          <PageHeader title="Book Mockup Generator Tool" />
+          <PageHeader title="Mockup Book Cover Generator - Free Online Tool" />
         </div>
 
         <!-- 功能区域 -->
@@ -132,6 +132,51 @@
           <ImageCarousel />
         </div>
 
+        <!-- SEO优化内容区域 - FAQ样式 -->
+        <div class="seo-content-section">
+          <h2>Frequently Asked Questions</h2>
+          
+          <div class="faq-item">
+            <h3>Is it possible to add my logo or design to the Book mockup?</h3>
+            <p>Absolutely. Select a template within the Book category and upload your design file, it will be placed automatically on the <strong>mockup book cover</strong> with perfect alignment.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3>Do I need Photoshop to use these Book mockups?</h3>
+            <p>No, you don't need Photoshop. Our <strong>book cover mockup online</strong> tool is web-based and works directly in your browser. Simply upload your design and download the result.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3>Can I download the Book mockup in high resolution?</h3>
+            <p>Yes, you can download your <strong>book mockup psd</strong>, JPG, or PNG files in high resolution. Perfect for both digital and print use.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3>Are the Book mockups suitable for commercial use?</h3>
+            <p>Yes, all our <strong>book cover mockup free</strong> templates are suitable for commercial use. Perfect for authors, designers, and publishers.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3>Can I edit the colors or textures of the Book mockup?</h3>
+            <p>Yes, you can customize various aspects of your <strong>book cover mockup</strong> including colors, textures, and lighting effects to match your brand.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3>How do I make sure my design fits perfectly in the Book mockup?</h3>
+            <p>Our <strong>book mockup generator</strong> automatically adjusts your design to fit perfectly. For best results, use high-resolution images and follow our recommended dimensions.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3>What file formats can I download my mockup in?</h3>
+            <p>You can download your <strong>free psd book mockup</strong> in multiple formats including JPG, PNG, and PSD. The PSD format allows for further editing in Photoshop.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3>Is this book cover mockup generator really free?</h3>
+            <p>Yes, our <strong>book cover mockups free</strong> service is completely free to use. No registration required, no hidden fees, and no watermarks on your final mockups.</p>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -157,6 +202,43 @@ export default {
     PageHeader: () => import('@/components/PageHeader.vue'),
     ImageCarousel: () => import('@/components/ImageCarousel.vue'),
     ImageUploadModal: () => import('@/components/ImageUploadModal.vue')
+  },
+  metaInfo: {
+    title: 'Mockup Book Cover Generator - Free Online Tool',
+    meta: [
+      {
+        name: 'description',
+        content: 'Free Book Mockup Generator - Create professional mockup book cover designs online. Upload your design and download book cover mockups free in JPG, PNG, PSD.'
+      },
+      {
+        name: 'keywords',
+        content: 'free Book Mockup Generator, mockup book cover, book cover mockup free, book cover mockup online'
+      },
+      {
+        property: 'og:title',
+        content: 'Mockup Book Cover Generator - Free Online Tool'
+      },
+      {
+        property: 'og:description',
+        content: 'Create professional mockup book cover designs for free! Upload your design and download in JPG, PNG, PSD formats.'
+      },
+      {
+        property: 'og:type',
+        content: 'website'
+      },
+      {
+        name: 'twitter:title',
+        content: 'Mockup Book Cover Generator - Free Online Tool'
+      },
+      {
+        name: 'twitter:description',
+        content: 'mockup book cover designs for free! Upload your design and download in JPG, PNG, PSD formats.'
+      },
+      {
+        rel: 'canonical',
+        href: 'https://www.mymockupbook.com/'
+      }
+    ]
   },
   data() {
     return {
@@ -973,6 +1055,61 @@ export default {
   border: 1px solid transparent; /* 边框透明，不要有颜色 */
 }
 
+/* SEO内容区域样式 - FAQ样式 */
+.seo-content-section {
+  margin-top: 3rem;
+  margin-left: 12rem;
+  margin-right: 12rem;
+  padding: 2rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  max-width: 1200px;
+}
+
+.seo-content-section h2 {
+  color: #2c3e50;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.faq-item {
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: box-shadow 0.3s ease;
+}
+
+.faq-item:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.faq-item h3 {
+  color: #2c3e50;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  line-height: 1.4;
+}
+
+.faq-item p {
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+.faq-item strong {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
 .header-section :deep(.page-header-content) {
   text-align: left; /* 确保PageHeader内容左对齐 */
 }
@@ -1297,6 +1434,24 @@ canvas {
   .control-panel,
   .result-panel {
     max-width: 100%;
+  }
+  
+  .seo-content-section {
+    margin-left: 3rem;
+    margin-right: 3rem;
+    padding: 1.5rem;
+  }
+  
+  .seo-content-section h2 {
+    font-size: 1.5rem;
+  }
+  
+  .faq-item {
+    padding: 1rem;
+  }
+  
+  .faq-item h3 {
+    font-size: 1rem;
   }
 }
 </style>
