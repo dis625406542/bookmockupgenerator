@@ -15,6 +15,11 @@ const routes = [
     component: Home
   },
   {
+    path: '/index.html',
+    name: 'HomeIndex',
+    component: Home
+  },
+  {
     path: '/coordinate-picker',
     name: 'CoordinatePicker',
     component: CoordinatePicker
