@@ -5,9 +5,7 @@
       <div class="breadcrumbs">
         <span class="breadcrumb-item">Home</span>
         <span class="breadcrumb-separator">></span>
-        <span class="breadcrumb-item">Print</span>
-        <span class="breadcrumb-separator">></span>
-        <span class="breadcrumb-item current">{{ title }}</span>
+        <span class="breadcrumb-item current">Book Mockup Generator</span>
       </div>
     </div>
   </div>

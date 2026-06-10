@@ -8,7 +8,7 @@
       <div class="unified-content-container">
         <!-- 标题区域 -->
         <div class="header-section">
-          <PageHeader title="Mockup Book Cover Generator - Free Online Tool" />
+          <PageHeader title="Free Book Mockup Generator Online" />
         </div>
 
         <!-- 功能区域 -->
@@ -59,7 +59,7 @@
           <div class="control-panel">
             <div class="panel-header">
               <span class="panel-title">Edit this template</span>
-              <el-button style="float: right; padding: 3px 0" type="text">Download PSD</el-button>
+              <el-button style="float: right; padding: 3px 0" type="text">100% Free</el-button>
             </div>
 
             <div class="control-group">
@@ -148,7 +148,7 @@
 
           <div class="faq-item">
             <h3>Can I download the Book mockup in high resolution?</h3>
-            <p>Yes, you can download your <strong>book mockup psd</strong>, JPG, or PNG files in high resolution. Perfect for both digital and print use.</p>
+            <p>Yes, you can download your <strong>book mockup</strong> in JPG or PNG format in high resolution. Perfect for both digital and print use.</p>
           </div>
 
           <div class="faq-item">
@@ -168,7 +168,7 @@
 
           <div class="faq-item">
             <h3>What file formats can I download my mockup in?</h3>
-            <p>You can download your <strong>free psd book mockup</strong> in multiple formats including JPG, PNG, and PSD. The PSD format allows for further editing in Photoshop.</p>
+            <p>You can download your <strong>book cover mockup</strong> in JPG or PNG format. Both are high quality and ready for digital use, social media, and print-on-demand platforms.</p>
           </div>
 
           <div class="faq-item">
@@ -204,23 +204,23 @@ export default {
     ImageUploadModal: () => import('@/components/ImageUploadModal.vue')
   },
   metaInfo: {
-    title: 'Mockup Book Cover Generator - Free Online Tool',
+    title: 'Free Book Mockup Generator Online | No Watermark - MyMockupBook',
     meta: [
       {
         name: 'description',
-        content: 'Free Book Mockup Generator - Create professional mockup book cover designs online. Upload your design and download book cover mockups free in JPG, PNG, PSD.'
+        content: 'Free online book mockup generator — upload your cover and create realistic 3D book mockups in seconds. No watermark, no signup. Download in JPG and PNG.'
       },
       {
         name: 'keywords',
-        content: 'free Book Mockup Generator, mockup book cover, book cover mockup free, book cover mockup online'
+        content: 'book mockup generator, free book mockup generator, book mockup generator online free, book cover mockup generator, book mockup online, book mockup generator no watermark'
       },
       {
         property: 'og:title',
-        content: 'Mockup Book Cover Generator - Free Online Tool'
+        content: 'Free Book Mockup Generator Online | No Watermark'
       },
       {
         property: 'og:description',
-        content: 'Create professional mockup book cover designs for free! Upload your design and download in JPG, PNG, PSD formats.'
+        content: 'Upload your cover and create realistic book mockups in seconds. Free, no watermark, no signup. Download in JPG and PNG.'
       },
       {
         property: 'og:type',
@@ -228,11 +228,11 @@ export default {
       },
       {
         name: 'twitter:title',
-        content: 'Mockup Book Cover Generator - Free Online Tool'
+        content: 'Free Book Mockup Generator Online | No Watermark'
       },
       {
         name: 'twitter:description',
-        content: 'mockup book cover designs for free! Upload your design and download in JPG, PNG, PSD formats.'
+        content: 'Upload your cover and create realistic book mockups in seconds. Free, no watermark, no signup. Download in JPG and PNG.'
       },
       {
         rel: 'canonical',

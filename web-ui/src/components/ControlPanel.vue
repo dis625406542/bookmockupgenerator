@@ -2,7 +2,7 @@
     <el-card class="control-panel">
       <div slot="header" class="clearfix">
         <span>Edit this template</span>
-        <el-button style="float: right; padding: 3px 0" type="text">Download PSD</el-button>
+        <el-button style="float: right; padding: 3px 0" type="text">100% Free</el-button>
       </div>
   
       <div class="control-group">
