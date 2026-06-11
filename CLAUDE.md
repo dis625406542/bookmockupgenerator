@@ -23,11 +23,33 @@
 - 代码在 `web-ui/` 子目录，不是仓库根
 - `npm run dev` 本地、`npm run build` 构建、`npm run lint`
 
-## 核心渲染逻辑（用户调试已久，谨慎对待）
-- `web-ui/src/utils/imageProcessor.js` —— **纯 Canvas + 纯 JS 算法，不依赖 Vue**。手部遮罩叠加：2倍中间尺寸重采样 + 白色阈值(240)判断手部区域 + 像素覆盖。框架无关，可整体移植。
-- `web-ui/src/templates.js` —— 模板定义（底图/封面透视坐标 destPoints/光影/手部蒙版图层），纯数据。
-- 透视变换（封面 warp 到书的四角）是质量短板所在，Canvas 2D 原生不支持，需 WebGL 或三角剖分纹理映射才能锐利。
-- **方向结论**：保留"模板+图层+透视变换"方案，不要换成 AI 重绘（AI 会破坏用户原始封面的文字/logo）。问题在执行质量，不在方法。
+## 核心渲染逻辑：PIXI.js v5 WebGL（2026-06 重写，已替代旧 Canvas2D）
+
+渲染全部在 `web-ui/src/views/Home.vue` 的 PIXI 方法里，**算法与模板无关**，换书本模型时这些方法一行都不用动：
+- `initPixiRenderer()` — 建 `PIXI.Application`（`backgroundAlpha:0`、`preserveDrawingBuffer:true` 否则 toDataURL 下载空白），预加载三张固定纹理。
+- `drawPixiScene(coverTex)` — 组装场景：背景 Sprite(contain 居中) → 封面 Mesh(网格变形+mask 抠图) → highlights Sprite(拉进封面 bbox，普通 alpha 混合)。
+- `buildQuadGeometry(quad)` — seg=20 双线性细分四边形，destPoints 四角 → 网格顶点。
+- `buildCoverMesh()` — 自定义 GLSL shader：`a = cover.a * mask.a`，输出预乘 alpha。mask 白区(a=1)显示封面、透明区(a=0)漏出底图真实手指，GPU 双线性采样天然羽化、消白边。
+
+**坐标系铁律（踩过坑，别再错）**：封面 quad 用 `scale = canvasWidth / template.width`，**绝不叠加背景的 bgX/bgY 偏移**。destPoints 是在这个无偏移坐标系下手调的，加偏移必错位。highlights 拉进封面 bbox + 普通 alpha 混合（不是 SCREEN、不是全画布）。
+
+旧的 `imageProcessor.js`（2倍重采样+白色阈值240像素覆盖）已弃用，仅留作参考，不要再走那条路。
+
+## 换新书本模型的标准改造流程
+算法通用，但**不是只换底图+坐标**。每个新模型需一套**配套素材 + 一组坐标**：
+- `background.jpg` — 底图(书+手+场景)，新做。
+- `mask.png` — indexed/带 alpha，白=封面区、透明=漏底图手指的孔。**必须和底图手指位置精确对齐**。
+- `highlights.png` — 书页纹理/明暗，带透明通道，叠在封面上。
+- `destPoints` — 封面四角 `[左上,右上,右下,左下]`，在新底图上重调。
+
+铁律：mask/highlights 跟着 background 的手指位置和书本透视走，三张图必须配套出，光换底图不换 mask 手指会漏不出或错位。
+
+destPoints 微调口诀：x=水平(大=右)、y=垂直(大=下，往上就减小 y)。当前 child-book 定稿值：`[252,134][548,134][548,501][248,503]`。
+
+**多模型支持的代码改造**（目前是写死单模板：顶部 3 个 import + `data.template` 单对象）：
+1. 改成 `templates: [{ id, width, height, bg, mask, highlights, destPoints }, ...]` 数组 + `currentTemplateId`。
+2. `drawPixiScene` 读 `this.currentTemplate` 取素材和坐标。
+3. 可选：把调 destPoints 做成画布上拖拽 4 个角点，省去改数字刷新的来回。
 
 ## SEO 现状与诊断（2026-06 据 GSC + SEMrush）
 - **根因**：纯 SPA 客户端渲染 + 全站只有首页 1 个真实页面（路由里 home1/home2/home3 是开发残版，coordinate-picker 是调试工具）。

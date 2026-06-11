@@ -191,6 +191,7 @@
 
 <script>
 // 【重要】这是在Vue项目中引入图片的标准方式
+import * as PIXI from 'pixi.js';
 import bookBackground1 from '@/assets/images/book-background1.jpg';
 import bookHighlights1 from '@/assets/images/book-highlights1.png';
 import bookMask1 from '@/assets/images/book-mask1.png';
@@ -266,10 +267,10 @@ export default {
             type: 'transformed-image',
             name: 'cover',
             destPoints: [
-            { x: 252, y: 136 }, // 左上：向右移动100px
-              { x: 548, y: 134 }, // 右上：向右移动100px
-              { x: 550, y: 495 }, // 右下：向右移动100px
-              { x: 260, y: 503 }, // 左下：向右移动100px
+            { x: 252, y: 134 }, // 左上：往上拉2px
+              { x: 548, y: 134 }, // 右上：原值
+              { x: 548, y: 501 }, // 右下：往下拉2px
+              { x: 248, y: 503 }, // 左下：底部左移12px
             ],
           },
           { type: 'image', src: bookHighlights1, id: 'highlights' },
@@ -279,23 +280,26 @@ export default {
     };
   },
   mounted() {
-    // 等待DOM完全渲染后再初始化
+    // 等待DOM完全渲染后再初始化 PIXI 渲染器并显示底图
     this.$nextTick(() => {
-      // 延迟一点时间确保Canvas完全准备好
       setTimeout(() => {
-        this.showBackgroundOnly();
+        this.initPixiRenderer();
       }, 100);
     });
     window.addEventListener('resize', this.handleResize);
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.handleResize);
+    if (this.pixiApp) {
+      this.pixiApp.destroy(true, { children: true, texture: true, baseTexture: true });
+      this.pixiApp = null;
+    }
   },
   methods: {
     handleResize() {
       clearTimeout(this.resizeTimer);
       this.resizeTimer = setTimeout(() => {
-        this.renderMockup(this.userImage);
+        this.resizePixiRenderer();
       }, 200);
     },
 
@@ -359,40 +363,8 @@ export default {
         this.$message.warning('请先上传一张封面图片！');
         return;
       }
-      // 自动执行智能合成流程：先合成手部遮罩，再进行书本渲染
-      this.renderWithSmartMerge();
-    },
-
-    // 智能渲染：自动合成手部遮罩，再进行书本渲染
-    async renderWithSmartMerge() {
-      this.isLoading = true;
-      
-      try {
-        // 第一步：先将用户图片拉伸到书本封面尺寸
-        const stretchedUserImage = await this.stretchImageToCoverSize(this.userImage);
-        
-        if (!stretchedUserImage) {
-          this.$message.error('图片拉伸失败，请重试！');
-          return;
-        }
-        
-        // 第二步：拉伸后的图片与手部遮罩合成
-        const mergedUserImage = await this.mergeUserImageWithHandMask(stretchedUserImage);
-        
-        if (!mergedUserImage) {
-          this.$message.error('图片合成失败，请重试！');
-          return;
-        }
-        
-        // 第三步：使用合成后的图片进行书本渲染
-        await this.renderMockupWithMergedImage(mergedUserImage);
-        
-      } catch (error) {
-        console.error('智能渲染过程中出错:', error);
-        this.$message.error('渲染失败，请检查控制台。');
-      } finally {
-        this.isLoading = false;
-      }
+      // PIXI WebGL 渲染：底图 + 封面网格变形 + 手部羽化遮罩 + 高光
+      this.renderPixiMockup(this.userImage);
     },
 
     loadImage(src) {
@@ -413,534 +385,180 @@ export default {
       });
     },
 
-    adjustCanvasSize(canvas) {
+    // ===== PIXI.js WebGL 渲染 =====
+
+    // 初始化 PIXI 应用 + 加载固定图层（底图/遮罩/高光/置换），并显示底图
+    async initPixiRenderer() {
       const container = this.$refs.canvasContainer;
-      if (!container) return;
-      const containerWidth = container.clientWidth;
-      const aspectRatio = this.template.width / this.template.height;
-      canvas.width = containerWidth;
-      canvas.height = containerWidth / aspectRatio;
+      const canvas = this.$refs.mockupCanvas;
+      if (!container || !canvas) return;
+
+      const w = container.clientWidth;
+      const h = w / (this.template.width / this.template.height);
+
+      this.pixiApp = new PIXI.Application({
+        view: canvas,
+        width: w,
+        height: h,
+        backgroundAlpha: 0,
+        antialias: true,
+        resolution: window.devicePixelRatio || 1,
+        autoDensity: true,
+        preserveDrawingBuffer: true, // 保留缓冲，否则 toDataURL 下载得到空白图
+      });
+
+      // 预加载固定纹理（PIXI v5：Texture.from + 等待 baseTexture 就绪）
+      this.tex = {
+        bg: await this.loadPixiTexture(bookBackground1),
+        mask: await this.loadPixiTexture(bookMask1),
+        highlights: await this.loadPixiTexture(bookHighlights1),
+      };
+
+      this.drawPixiScene(null);
     },
 
-    // 显示背景图（页面初始化时使用）
-    async showBackgroundOnly() {
-      const canvas = this.$refs.mockupCanvas;
-      if (!canvas) {
-        console.error('Canvas未找到');
-        return;
-      }
-      
-      const ctx = canvas.getContext('2d');
-      if (!ctx) {
-        console.error('无法获取Canvas上下文');
-        return;
-      }
-
-      try {
-        // 调整Canvas尺寸
-        this.adjustCanvasSize(canvas);
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // 只加载并显示背景图
-        const backgroundLayer = this.template.layers.find(l => l.id === 'background');
-        if (backgroundLayer) {
-          const backgroundImg = await this.loadImage(backgroundLayer.src);
-          
-          // 修复：保持背景图原始宽高比，自适应显示
-          const bgAspectRatio = backgroundImg.width / backgroundImg.height;
-          const canvasAspectRatio = canvas.width / canvas.height;
-          
-          let bgWidth, bgHeight, bgX, bgY;
-          
-          if (canvasAspectRatio > bgAspectRatio) {
-            // Canvas更宽，以高度为准
-            bgHeight = canvas.height;
-            bgWidth = bgHeight * bgAspectRatio;
-            bgX = (canvas.width - bgWidth) / 2;
-            bgY = 0;
-          } else {
-            // Canvas更高，以宽度为准
-            bgWidth = canvas.width;
-            bgHeight = bgWidth / bgAspectRatio;
-            bgX = 0;
-            bgY = (canvas.height - bgHeight) / 2;
-          }
-          
-          ctx.drawImage(backgroundImg, bgX, bgY, bgWidth, bgHeight);
-        }
-      } catch (error) {
-        console.error('显示背景图失败:', error);
-      }
-    },
-
-    // --- 【核心渲染函数 - 严格按照app.min.js的图层顺序】 ---
-    async renderMockup(coverImage) {
-      this.isLoading = true;
-      const canvas = this.$refs.mockupCanvas;
-      const ctx = canvas.getContext('2d');
-
-      try {
-        this.adjustCanvasSize(canvas);
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const scale = canvas.width / this.template.width;
-
-        // === 第1步：绘制背景图层 (最底层) ===
-        const backgroundLayer = this.template.layers.find(l => l.id === 'background');
-        if (!backgroundLayer) throw new Error("模板中未找到背景图层");
-        
-        const backgroundImg = await this.loadImage(backgroundLayer.src);
-        
-        // 修复：保持背景图原始宽高比，自适应显示
-        const bgAspectRatio = backgroundImg.width / backgroundImg.height;
-        const canvasAspectRatio = canvas.width / canvas.height;
-        
-        let bgWidth, bgHeight, bgX, bgY;
-        
-        if (canvasAspectRatio > bgAspectRatio) {
-          // Canvas更宽，以高度为准
-          bgHeight = canvas.height;
-          bgWidth = bgHeight * bgAspectRatio;
-          bgX = (canvas.width - bgWidth) / 2;
-          bgY = 0;
+    // PIXI v5 纹理加载：确保 baseTexture 加载完成后再返回，避免宽高为 0
+    loadPixiTexture(url) {
+      return new Promise((resolve, reject) => {
+        const texture = PIXI.Texture.from(url);
+        if (texture.baseTexture.valid) {
+          resolve(texture);
         } else {
-          // Canvas更高，以宽度为准
-          bgWidth = canvas.width;
-          bgHeight = bgWidth / bgAspectRatio;
-          bgX = 0;
-          bgY = (canvas.height - bgHeight) / 2;
+          texture.baseTexture.once('loaded', () => resolve(texture));
+          texture.baseTexture.once('error', reject);
         }
-        
-        ctx.drawImage(backgroundImg, bgX, bgY, bgWidth, bgHeight);
+      });
+    },
 
-        // === 第2步：绘制用户封面 (透视变换) ===
-        if (coverImage) {
-          const coverLayer = this.template.layers.find(l => l.type === 'transformed-image' && l.name === 'cover');
-          if (coverLayer) {
-            this.drawTransformedImage(ctx, coverImage, coverLayer.destPoints, scale);
-          }
-        }
+    resizePixiRenderer() {
+      if (!this.pixiApp) return;
+      const container = this.$refs.canvasContainer;
+      const w = container.clientWidth;
+      const h = w / (this.template.width / this.template.height);
+      this.pixiApp.renderer.resize(w, h);
+      this.drawPixiScene(this.coverTex || null);
+    },
 
-        // === 第3步：绘制光影效果图层 ===
-        const highlightsLayer = this.template.layers.find(l => l.id === 'highlights');
-        if (highlightsLayer) {
-          const highlightsImg = await this.loadImage(highlightsLayer.src);
-          
-          // 关键修复：光影效果应该只覆盖封面区域，增加书本纹理
-          // 使用与封面相同的坐标区域来绘制光影效果
-          const coverLayer = this.template.layers.find(l => l.type === 'transformed-image' && l.name === 'cover');
-          if (coverLayer) {
-            // 计算光影效果的绘制区域（与封面区域完全一致）
-            const dest = coverLayer.destPoints.map(p => ({ x: p.x * scale, y: p.y * scale }));
-            
-            // 计算边界框（与封面完全一致）
-            const minX = Math.min(...dest.map(p => p.x));
-            const minY = Math.min(...dest.map(p => p.y));
-            const maxX = Math.max(...dest.map(p => p.x));
-            const maxY = Math.max(...dest.map(p => p.y));
-            const width = maxX - minX;
-            const height = maxY - minY;
-            
-            // 只在这个区域内绘制光影效果
-            ctx.save();
-            ctx.beginPath();
-            ctx.rect(minX, minY, width, height);
-            ctx.clip();
-            
-            // 绘制光影效果，但只在这个区域内
-            ctx.drawImage(highlightsImg, minX, minY, width, height);
-            ctx.restore();
-          } else {
-            // 如果没有封面图层，则按原来的方式绘制
-            ctx.drawImage(highlightsImg, 0, 0, canvas.width, canvas.height);
-          }
-        }
-
-      } catch (error) {
-        console.error("渲染过程中出错:", error);
-        this.$message.error("渲染失败，请检查控制台。");
+    // 用户上传后调用：把封面转成纹理再重绘场景
+    async renderPixiMockup(coverImage) {
+      if (!this.pixiApp) await this.initPixiRenderer();
+      this.isLoading = true;
+      try {
+        // 封面图转 PIXI 纹理（coverImage 是 HTMLImageElement）
+        this.coverTex = PIXI.Texture.from(coverImage);
+        this.drawPixiScene(this.coverTex);
+      } catch (e) {
+        console.error('PIXI 渲染失败:', e);
+        this.$message.error('渲染失败，请检查控制台。');
       } finally {
         this.isLoading = false;
       }
     },
 
-    drawTransformedImage(ctx, image, destPoints, scale) {
+    // 组装场景：底图 → 封面(网格变形，shader 内合成手部遮罩) → 高光
+    drawPixiScene(coverTex) {
+      const app = this.pixiApp;
+      if (!app || !this.tex) return;
+      const stage = app.stage;
+      stage.removeChildren();
 
-      
-      // 修复Vue Observer问题，正确获取坐标值
-      const dest = destPoints.map(p => {
-        // 确保能正确访问x, y属性
-        const x = p.x || (p._value && p._value.x) || 0;
-        const y = p.y || (p._value && p._value.y) || 0;
-        return { x: x * scale, y: y * scale };
-      });
+      const W = app.renderer.width / (app.renderer.resolution || 1);
+      const H = app.renderer.height / (app.renderer.resolution || 1);
 
-      
-      // 特别标注左下角坐标
-      
-      // 检查数组结构，修复Observer访问问题（已注释掉未使用的变量）
-      // destPoints.forEach((point) => {
-      //   // 确保能正确访问x, y属性（已注释掉console.log）
-      //   // const x = point.x || (point._value && point._value.x) || 0;
-      //   // const y = point.y || (point._value && point._value.y) || 0;
-      // });
-      
-      // 注释掉未使用的变量
-      // const bottomLeft = dest[3]; // 第四个点是左下角
-      
-      // 获取左下角原始值（已注释掉未使用的变量）
-      // const bottomLeftOriginal = destPoints[3];
-      // const bottomLeftX = bottomLeftOriginal.x || (bottomLeftOriginal._value && bottomLeftOriginal._value.x) || 0;
-      // const bottomLeftY = bottomLeftOriginal.y || (bottomLeftOriginal._value && bottomLeftOriginal._value.y) || 0;
-      
-      // 【重要修复】使用真正的四边形渲染，按照四个坐标点围成的形状
-      
-      // 使用Canvas的路径绘制四边形
-      ctx.save();
-      ctx.globalAlpha = 0.9; // 增加透明度
-      
-      // 创建四边形路径，确保坐标正确
-      
-      // 按照正确的顺序绘制四边形：左上→右上→右下→左下→左上
-      ctx.beginPath();
-      
-      // 左上角
-      ctx.moveTo(dest[0].x, dest[0].y);
-      
-      // 右上角
-      ctx.lineTo(dest[1].x, dest[1].y);
-      
-      // 右下角
-      ctx.lineTo(dest[2].x, dest[2].y);
-      
-      // 左下角
-      ctx.lineTo(dest[3].x, dest[3].y);
-      
-      // 回到左上角，形成闭合路径
-      ctx.lineTo(dest[0].x, dest[0].y);
-      
-      ctx.closePath();
-      
-      // 调试：路径轮廓已注释掉（去掉红色圈）
-      // ctx.strokeStyle = 'red';
-      // ctx.lineWidth = 2;
-      // ctx.stroke();
-      
-      // 设置裁剪区域为四边形
-      ctx.clip();
-      
-      // 计算图片的绘制区域（使用四个坐标点的边界）
-      const minX = Math.min(...dest.map(p => p.x));
-      const minY = Math.min(...dest.map(p => p.y));
-      const maxX = Math.max(...dest.map(p => p.x));
-      const maxY = Math.max(...dest.map(p => p.y));
-      const width = maxX - minX;
-      const height = maxY - minY;
-      
-      // 在四边形区域内绘制图片
-      ctx.drawImage(image, minX, minY, width, height);
-      
-      ctx.restore();
-    },
-
-    drawTriangle(ctx, image, src, dst) {
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(dst[0].x, dst[0].y);
-      ctx.lineTo(dst[1].x, dst[1].y);
-      ctx.lineTo(dst[2].x, dst[2].y);
-      ctx.closePath();
-      ctx.clip();
-      
-      // 计算变换矩阵
-      const t = this.getTransform(src, dst);
-      
-      // 应用变换
-      ctx.transform(t.a, t.b, t.c, t.d, t.e, t.f);
-      
-      // 绘制图片
-      ctx.drawImage(image, 0, 0);
-      
-      // 恢复Canvas状态
-      ctx.restore();
-    },
-
-    getTransform(src, dst) {
-      const D = src[0].x * (src[1].y - src[2].y) + src[1].x * (src[2].y - src[0].y) + src[2].x * (src[0].y - src[1].y);
-      if (D === 0) return { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 };
-      return {
-        a: (dst[0].x * (src[1].y - src[2].y) + dst[1].x * (src[2].y - src[0].y) + dst[2].x * (src[0].y - src[1].y)) / D,
-        b: (dst[0].y * (src[1].y - src[2].y) + dst[1].y * (src[2].y - src[0].y) + dst[2].y * (src[0].y - src[1].y)) / D,
-        c: (dst[0].x * (src[2].x - src[1].x) + dst[1].x * (src[0].x - src[2].x) + dst[2].x * (src[1].x - src[0].x)) / D,
-        d: (dst[0].y * (src[2].x - src[1].x) + dst[1].y * (src[0].x - src[2].x) + dst[2].y * (src[1].x - src[0].x)) / D,
-        e: (dst[0].x * (src[1].y * src[2].x - src[2].y * src[1].x) + dst[1].x * (src[2].y * src[0].x - src[0].y * src[2].x) + dst[2].x * (src[0].y * src[1].x - src[1].y * src[0].x)) / D,
-        f: (dst[0].y * (src[1].y * src[2].x - src[2].y * src[1].x) + dst[1].y * (src[2].y * src[0].x - src[0].y * src[2].x) + dst[2].y * (src[0].y * src[1].x - src[1].y * src[0].x)) / D,
-      };
-    },
-
-    // 将用户图片拉伸到书本封面尺寸
-    async stretchImageToCoverSize(userImage) {
-      if (!userImage) {
-        console.error('用户图片不存在');
-        return null;
+      // 背景以 contain 方式居中铺满（与模板坐标系统一用同一缩放+偏移）
+      const bg = this.tex.bg;
+      const bgRatio = bg.width / bg.height;
+      const viewRatio = W / H;
+      let bgW, bgH, bgX, bgY;
+      if (viewRatio > bgRatio) {
+        bgH = H; bgW = H * bgRatio; bgX = (W - bgW) / 2; bgY = 0;
+      } else {
+        bgW = W; bgH = W / bgRatio; bgX = 0; bgY = (H - bgH) / 2;
       }
+      const bgSprite = new PIXI.Sprite(bg);
+      bgSprite.position.set(bgX, bgY);
+      bgSprite.width = bgW; bgSprite.height = bgH;
+      stage.addChild(bgSprite);
 
-      try {
-        // 获取模板中封面图层的目标尺寸
-        const coverLayer = this.template.layers.find(l => l.type === 'transformed-image' && l.name === 'cover');
-        if (!coverLayer) {
-          console.error('未找到封面图层配置');
-          return userImage;
-        }
+      if (!coverTex) return;
 
-        // 计算封面图层的实际尺寸（基于destPoints）
-        const destPoints = coverLayer.destPoints;
-        const minX = Math.min(...destPoints.map(p => p.x));
-        const minY = Math.min(...destPoints.map(p => p.y));
-        const maxX = Math.max(...destPoints.map(p => p.x));
-        const maxY = Math.max(...destPoints.map(p => p.y));
-        const coverWidth = maxX - minX;
-        const coverHeight = maxY - minY;
+      // 封面四边形坐标系：与旧 Canvas2D 完全一致——scale = W/800，不叠加背景偏移。
+      // destPoints 是历史在该坐标系下手调好的值，必须精确复用，加偏移反而会错位。
+      const scale = W / this.template.width;
+      const dp = this.template.layers.find(l => l.name === 'cover').destPoints;
+      const quad = dp.map(p => ({ x: p.x * scale, y: p.y * scale }));
+      const geometry = this.buildQuadGeometry(quad);
 
-        // 创建临时Canvas进行拉伸
-        const tempCanvas = document.createElement('canvas');
-        const tempCtx = tempCanvas.getContext('2d');
-        
-        // 设置Canvas尺寸为封面尺寸
-        tempCanvas.width = coverWidth;
-        tempCanvas.height = coverHeight;
-        
-        // 将用户图片拉伸到封面尺寸
-        tempCtx.drawImage(userImage, 0, 0, coverWidth, coverHeight);
-        
-        // 转换为Image对象并返回
-        const stretchedImageDataUrl = tempCanvas.toDataURL('image/png');
-        const stretchedImage = await this.loadImage(stretchedImageDataUrl);
-        
-        return stretchedImage;
-        
-      } catch (error) {
-        console.error('图片拉伸过程中出错:', error);
-        return null;
+      // 封面：mask 的 alpha 控制显隐——白区(a=1)显示封面，透明区(a=0)露出底图真实手指
+      const cover = this.buildCoverMesh(geometry, coverTex, this.tex.mask);
+      stage.addChild(cover);
+
+      // 高光/阴影：与旧 Canvas2D 一致——highlights 图拉伸进封面包围盒(bbox)，普通 alpha 混合。
+      // highlights PNG 自带透明通道，只有书页纹理/明暗部分可见。
+      if (this.highlights) {
+        const xs = quad.map(p => p.x), ys = quad.map(p => p.y);
+        const minX = Math.min(...xs), minY = Math.min(...ys);
+        const w = Math.max(...xs) - minX, h = Math.max(...ys) - minY;
+        const hl = new PIXI.Sprite(this.tex.highlights);
+        hl.position.set(minX, minY);
+        hl.width = w; hl.height = h;
+        stage.addChild(hl);
       }
     },
 
-    // 真正的优化版手部遮罩合成算法 - 手指透明 + 边缘暗化
-    async mergeUserImageWithHandMask(userImage) {
-      if (!userImage) {
-        console.error('用户图片不存在');
-        return null;
-      }
-
-      try {
-        // 加载手部遮罩
-        const handMask = await this.loadImage(bookMask1);
-        
-        // 创建临时Canvas进行合成
-        const tempCanvas = document.createElement('canvas');
-        const tempCtx = tempCanvas.getContext('2d');
-        
-        // 设置Canvas尺寸为用户图片尺寸
-        tempCanvas.width = userImage.width;
-        tempCanvas.height = userImage.height;
-        
-
-        
-        // 1. 绘制用户图片作为底图
-        tempCtx.drawImage(userImage, 0, 0, tempCanvas.width, tempCanvas.height);
-        
-        // 2. 创建手部遮罩Canvas并进行边缘平滑处理
-        const maskCanvas = document.createElement('canvas');
-        const maskCtx = maskCanvas.getContext('2d');
-        maskCanvas.width = tempCanvas.width;
-        maskCanvas.height = tempCanvas.height;
-        
-        // 绘制调整尺寸后的手部遮罩
-        maskCtx.drawImage(handMask, 0, 0, maskCanvas.width, maskCanvas.height);
-        
-        // 3. 多级边缘平滑处理（模拟Python的完整算法）
-        
-        // 第一级：轻微高斯模糊，软化边缘
-        maskCtx.filter = 'blur(1.5px)'; // 增加模糊半径，更自然
-        maskCtx.drawImage(maskCanvas, 0, 0);
-        maskCtx.filter = 'none';
-        
-        // 第二级：应用对比度调整，让边缘更柔和
-        maskCtx.filter = 'contrast(0.9)'; // 降低对比度，减少硬边缘
-        maskCtx.drawImage(maskCanvas, 0, 0);
-        maskCtx.filter = 'none';
-        
-        // 第三级：应用亮度调整，让手部区域更自然
-        maskCtx.filter = 'brightness(1.1)'; // 轻微提亮，减少PS痕迹
-        maskCtx.drawImage(maskCanvas, 0, 0);
-        maskCtx.filter = 'none';
-        
-        // 4. 获取像素数据进行合成
-        const userImageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
-        const maskImageData = maskCtx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
-        const resultImageData = tempCtx.createImageData(tempCanvas.width, tempCanvas.height);
-        
-        const userPixels = userImageData.data;
-        const maskPixels = maskImageData.data;
-        const resultPixels = resultImageData.data;
-        
-
-        
-                 // 5. 真正的优化版合成算法（手指透明 + 边缘暗化）
-         const whiteThreshold = 240; // 白色阈值
-         const transparencyFactor = 0.6; // 手指透明度因子（0.6 = 40%透明）
-         const edgeDarkenFactor = 0.5; // 边缘暗化因子（0.5 = 暗化50%）
-         // 注释掉未使用的统计变量
-         // let handRegionCount = 0;
-         // let transparentPixelsCount = 0;
-         // let edgeDarkenedCount = 0;
-        
-        // 单遍扫描，直接处理每个像素
-        for (let i = 0; i < userPixels.length; i += 4) {
-          const maskR = maskPixels[i];
-          const maskG = maskPixels[i + 1];
-          const maskB = maskPixels[i + 2];
-          const maskA = maskPixels[i + 3];
-          
-          // 检测是否为手部区域
-          const isWhite = maskR > whiteThreshold && maskG > whiteThreshold && maskB > whiteThreshold;
-          
-          if (isWhite) {
-            // 白色区域：保持用户图片
-            resultPixels[i] = userPixels[i];
-            resultPixels[i + 1] = userPixels[i + 1];
-            resultPixels[i + 2] = userPixels[i + 2];
-            resultPixels[i + 3] = userPixels[i + 3];
-          } else {
-            // 非白色区域：手部遮罩处理
-            
-            // 计算手部像素的亮度（用于判断边缘）
-            const brightness = (maskR + maskG + maskB) / 3;
-            
-            // 判断是否为边缘像素（亮度接近白色阈值）
-            const isEdgePixel = brightness > (whiteThreshold - 30); // 边缘检测阈值
-            
-            if (isEdgePixel) {
-              // 边缘像素：应用边缘暗化 + 透明度
-              const edgeDarkness = (brightness - (whiteThreshold - 30)) / 30; // 0-1的暗化程度
-              const finalDarkness = edgeDarkness * (1 - edgeDarkenFactor);
-              
-                             // 边缘暗化处理
-               resultPixels[i] = Math.round(maskR * (1 - finalDarkness));     // R
-               resultPixels[i + 1] = Math.round(maskG * (1 - finalDarkness)); // G
-               resultPixels[i + 2] = Math.round(maskB * (1 - finalDarkness)); // B
-               resultPixels[i + 3] = Math.round(maskA * transparencyFactor);  // A 降低透明度
-               
-               // edgeDarkenedCount++; // 已注释掉未使用的变量
-             } else {
-               // 核心手部像素：保持原色，但降低透明度
-               resultPixels[i] = maskR;
-               resultPixels[i + 1] = maskG;
-               resultPixels[i + 2] = maskB;
-               resultPixels[i + 3] = Math.round(maskA * transparencyFactor); // A 降低透明度
-             }
-             
-             // handRegionCount++; // 已注释掉未使用的变量
-             // transparentPixelsCount++; // 已注释掉未使用的变量
-          }
+    // 构建双线性细分四边形 geometry（可被封面和高光复用）
+    buildQuadGeometry(quad) {
+      const seg = 20;
+      const verts = [], uvs = [], idx = [];
+      const [tl, tr, br, bl] = quad;
+      for (let r = 0; r <= seg; r++) {
+        const v = r / seg;
+        for (let c = 0; c <= seg; c++) {
+          const u = c / seg;
+          const top = { x: tl.x + (tr.x - tl.x) * u, y: tl.y + (tr.y - tl.y) * u };
+          const bot = { x: bl.x + (br.x - bl.x) * u, y: bl.y + (br.y - bl.y) * u };
+          verts.push(top.x + (bot.x - top.x) * v, top.y + (bot.y - top.y) * v);
+          uvs.push(u, v);
         }
-        
-
-        
-        // 6. 将合成结果绘制到临时Canvas
-        tempCtx.putImageData(resultImageData, 0, 0);
-        
-        // 7. 最终边缘平滑处理 - 暂时注释掉模糊处理，保持手指清晰度
-        // tempCtx.filter = 'blur(0.5px)'; // 轻微模糊，进一步平滑边缘
-        // tempCtx.drawImage(tempCanvas, 0, 0);
-        // tempCtx.filter = 'none';
-        
-        const mergedImageDataUrl = tempCanvas.toDataURL('image/png');
-        const mergedImage = await this.loadImage(mergedImageDataUrl);
-        
-
-        return mergedImage;
-        
-      } catch (error) {
-        console.error('合成过程中出错:', error);
-        return null;
       }
+      const stride = seg + 1;
+      for (let r = 0; r < seg; r++) {
+        for (let c = 0; c < seg; c++) {
+          const a = r * stride + c, b = a + 1, d = a + stride, e = d + 1;
+          idx.push(a, b, d, b, e, d);
+        }
+      }
+      return new PIXI.Geometry()
+        .addAttribute('aVertexPosition', verts, 2)
+        .addAttribute('aTextureCoord', uvs, 2)
+        .addIndex(idx);
     },
 
-    // 使用合成后的图片进行书本渲染
-    async renderMockupWithMergedImage(mergedImage) {
-      
-      const canvas = this.$refs.mockupCanvas;
-      const ctx = canvas.getContext('2d');
-
-      try {
-        this.adjustCanvasSize(canvas);
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const scale = canvas.width / this.template.width;
-
-        // === 第1步：绘制背景图层 ===
-        const backgroundLayer = this.template.layers.find(l => l.id === 'background');
-        if (backgroundLayer) {
-          const backgroundImg = await this.loadImage(backgroundLayer.src);
-          
-          // 保持背景图原始宽高比，自适应显示
-          const bgAspectRatio = backgroundImg.width / backgroundImg.height;
-          const canvasAspectRatio = canvas.width / canvas.height;
-          
-          let bgWidth, bgHeight, bgX, bgY;
-          
-          if (canvasAspectRatio > bgAspectRatio) {
-            bgHeight = canvas.height;
-            bgWidth = bgHeight * bgAspectRatio;
-            bgX = (canvas.width - bgWidth) / 2;
-            bgY = 0;
-          } else {
-            bgWidth = canvas.width;
-            bgHeight = bgWidth / bgAspectRatio;
-            bgX = 0;
-            bgY = (canvas.height - bgHeight) / 2;
-          }
-          
-          ctx.drawImage(backgroundImg, bgX, bgY, bgWidth, bgHeight);
-        }
-
-        // === 第2步：绘制合成后的用户封面（透视变换）===
-        const coverLayer = this.template.layers.find(l => l.type === 'transformed-image' && l.name === 'cover');
-        if (coverLayer) {
-          this.drawTransformedImage(ctx, mergedImage, coverLayer.destPoints, scale);
-        }
-
-        // === 第3步：绘制光影效果图层 ===
-        const highlightsLayer = this.template.layers.find(l => l.id === 'highlights');
-        if (highlightsLayer) {
-          const highlightsImg = await this.loadImage(highlightsLayer.src);
-          
-          // 限制光影效果在封面区域
-          if (coverLayer) {
-            const dest = coverLayer.destPoints.map(p => ({ x: p.x * scale, y: p.y * scale }));
-            const minX = Math.min(...dest.map(p => p.x));
-            const minY = Math.min(...dest.map(p => p.y));
-            const maxX = Math.max(...dest.map(p => p.x));
-            const maxY = Math.max(...dest.map(p => p.y));
-            const width = maxX - minX;
-            const height = maxY - minY;
-            
-            ctx.save();
-            ctx.beginPath();
-            ctx.rect(minX, minY, width, height);
-            ctx.clip();
-            ctx.drawImage(highlightsImg, minX, minY, width, height);
-            ctx.restore();
-          } else {
-            ctx.drawImage(highlightsImg, 0, 0, canvas.width, canvas.height);
-          }
-        }
-
-
-        
-      } catch (error) {
-        console.error('书本渲染过程中出错:', error);
-        throw error;
-      }
+    // 封面网格：封面纹理用 mask 的 alpha 通道做遮罩。
+    // mask 白区 a=1 显示封面；透明区 a=0 露出底图真实手指。GPU 双线性采样天然羽化消白边
+    buildCoverMesh(geometry, coverTex, maskTex) {
+      const vert = `
+        attribute vec2 aVertexPosition;
+        attribute vec2 aTextureCoord;
+        uniform mat3 projectionMatrix;
+        varying vec2 vUv;
+        void main() {
+          gl_Position = vec4((projectionMatrix * vec3(aVertexPosition, 1.0)).xy, 0.0, 1.0);
+          vUv = aTextureCoord;
+        }`;
+      const frag = `
+        precision mediump float;
+        varying vec2 vUv;
+        uniform sampler2D uCover;
+        uniform sampler2D uMask;
+        void main() {
+          vec4 cover = texture2D(uCover, vUv);
+          float m = texture2D(uMask, vUv).a; // 封面区=1，手指区=0
+          float a = cover.a * m;
+          gl_FragColor = vec4(cover.rgb * a, a); // 预乘 alpha
+        }`;
+      const shader = PIXI.Shader.from(vert, frag, { uCover: coverTex, uMask: maskTex });
+      return new PIXI.Mesh(geometry, shader);
     },
 
     // 下载渲染后的图片
