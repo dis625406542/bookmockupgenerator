@@ -1,37 +1,22 @@
 <template>
   <div class="header">
     <div class="header-content">
-      <!-- Logo -->
-      <div class="logo">
-        <div class="logo-m left-m">m</div>
-        <div class="logo-m right-m">m</div>
-      </div>
-      
-      <!-- Navigation Links -->
+      <!-- Logo + Brand -->
+      <a href="/" class="logo">
+        <img src="/logo.png" alt="MyMockupBook" class="logo-img" />
+        <span class="brand-name">MyMockupBook</span>
+      </a>
+
+      <!-- 中间导航 -->
       <nav class="nav-links">
-        <div class="search-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <a href="#" class="nav-link">Dashboard</a>
-        <div class="nav-dropdown">
-          <a href="#" class="nav-link">Mockups <span class="dropdown-arrow">▼</span></a>
-        </div>
-        <div class="nav-dropdown">
-          <a href="#" class="nav-link">Designs <span class="dropdown-arrow">▼</span></a>
-        </div>
-        <a href="#" class="nav-link">Pricing</a>
-        <div class="nav-dropdown">
-          <a href="#" class="nav-link">Blog <span class="dropdown-arrow">▼</span></a>
-        </div>
+        <a href="/" class="nav-link">Generator</a>
+        <a href="/#how-it-works" class="nav-link">How It Works</a>
+        <a href="/#templates" class="nav-link">Templates</a>
+        <a href="/#faq" class="nav-link">FAQ</a>
       </nav>
-      
-      <!-- Action Buttons -->
-      <div class="action-buttons">
-        <button class="upgrade-btn">Upgrade</button>
-        <button class="profile-btn">G</button>
-      </div>
+
+      <!-- 右侧 CTA -->
+      <a href="/" class="cta-btn">Create Mockup</a>
     </div>
   </div>
 </template>
@@ -45,142 +30,108 @@ export default {
 <style scoped>
 .header {
   background: white;
-  border-bottom: none; /* 移除底部边框，避免重复的分隔线 */
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   width: 100%;
 }
 
 .header-content {
-  /* 移除max-width限制，让Header真正覆盖全屏 */
   width: 100%;
-  margin: 0;
-  padding: 0 6rem; /* 增加左右边距，与页面其他部分保持一致 */
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 64px;
-  text-align: left; /* 确保内容左对齐 */
+  height: 56px;
+  gap: 2rem;
 }
 
 .logo {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 10px;
+  text-decoration: none;
+  flex-shrink: 0;
 }
 
-.logo-m {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 18px;
-  color: white;
+.logo-img {
+  height: 36px;
+  width: auto;
+  display: block;
 }
 
-.left-m {
-  background: #3b82f6;
-}
-
-.right-m {
-  background: #ef4444;
+.brand-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111827;
 }
 
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 32px;
-  margin-left: 0.5rem; /* 添加小的左边距，让文字贴近Logo */
-}
-
-.search-icon {
-  color: #6b7280;
-  cursor: pointer;
-  transition: color 0.2s;
-}
-
-.search-icon:hover {
-  color: #374151;
+  gap: 28px;
+  margin: 0 auto;
 }
 
 .nav-link {
   text-decoration: none;
   color: #374151;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 0.9rem;
   transition: color 0.2s;
+  white-space: nowrap;
 }
 
 .nav-link:hover {
-  color: #1f2937;
+  color: #3b82f6;
 }
 
-.nav-dropdown {
-  position: relative;
-}
-
-.dropdown-arrow {
-  font-size: 10px;
-  margin-left: 4px;
-  color: #9ca3af;
-}
-
-.action-buttons {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-left: auto; /* 让右侧按钮靠右 */
-}
-
-.upgrade-btn {
-  background: #ef4444;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-weight: 500;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.upgrade-btn:hover {
-  background: #dc2626;
-}
-
-.profile-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
+.cta-btn {
+  display: inline-block;
   background: #3b82f6;
   color: white;
-  border: none;
-  font-weight: bold;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  text-decoration: none;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.88rem;
+  transition: background 0.2s;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
-.profile-btn:hover {
+.cta-btn:hover {
   background: #2563eb;
+}
+
+/* 平板：收起中间导航 */
+@media (max-width: 900px) {
+  .nav-links {
+    display: none;
+  }
 }
 
 @media (max-width: 768px) {
   .header-content {
-    padding: 0 2rem; /* 移动端减少左右边距 */
+    padding: 0 1rem;
+    height: 50px;
+    gap: 1rem;
   }
-  
-  .nav-links {
-    gap: 20px;
+
+  .logo-img {
+    height: 30px;
   }
-  
-  .nav-link {
-    font-size: 13px;
+
+  .brand-name {
+    font-size: 0.95rem;
+  }
+
+  .cta-btn {
+    padding: 6px 12px;
+    font-size: 0.82rem;
   }
 }
 </style>

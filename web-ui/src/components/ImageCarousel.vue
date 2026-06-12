@@ -16,7 +16,7 @@
           :class="{ active: currentIndex === index }"
         >
           <div class="item-image">
-            <img :src="bookImage" alt="Book mockup" class="mockup-image" />
+            <img :src="bookImage" :alt="item.title" class="mockup-image" loading="lazy" />
           </div>
           <div class="item-title">{{ item.title }}</div>
         </div>
@@ -326,25 +326,38 @@ export default {
   box-shadow: 0 4px 16px rgba(255, 107, 107, 0.4) !important;
 }
 
-/* 响应式设计 */
 @media (max-width: 768px) {
+  .image-carousel {
+    overflow: hidden;
+  }
+
+  .carousel-header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
   .carousel-item {
-    flex: 0 0 160px;
+    flex: 0 0 140px;
   }
-  
+
   .item-image {
-    width: 160px;
-    height: 160px;
+    width: 140px;
+    height: 140px;
   }
-  
+
   .carousel-arrow {
-    width: 36px;
-    height: 36px;
-    font-size: 0.9rem;
+    width: 32px;
+    height: 32px;
+    font-size: 0.85rem;
   }
-  
-  .carousel-header h3 {
-    font-size: 1.3rem;
+
+  .carousel-arrow-right {
+    right: 4px;
+  }
+
+  .carousel-arrow-left {
+    left: 4px;
   }
 }
 </style>

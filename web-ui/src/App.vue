@@ -11,8 +11,24 @@
 <script>
 // import Home from './views/Home.vue';
 
+const SITE_URL = 'https://www.mymockupbook.com';
+const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.png`;
+
 export default {
   name: 'App',
+  // 站点级 meta 默认值：各页面通过 vmid 覆盖 title/description/og:url 等，
+  // 公共字段（og:image、site_name、locale、twitter 卡）在此统一维护，避免重复。
+  metaInfo: {
+    titleTemplate: (chunk) => (chunk ? chunk : 'Free Book Mockup Generator Online — No Watermark | MyMockupBook'),
+    htmlAttrs: { lang: 'en' },
+    meta: [
+      { vmid: 'og:site_name', property: 'og:site_name', content: 'MyMockupBook' },
+      { vmid: 'og:locale', property: 'og:locale', content: 'en_US' },
+      { vmid: 'og:image', property: 'og:image', content: DEFAULT_OG_IMAGE },
+      { vmid: 'twitter:card', name: 'twitter:card', content: 'summary_large_image' },
+      { vmid: 'twitter:image', name: 'twitter:image', content: DEFAULT_OG_IMAGE },
+    ],
+  },
   // components: {
   //   Home
   // }

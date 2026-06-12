@@ -23,6 +23,7 @@
     "pixi.js": "^5.3.12",
     "vue": "2.6.12",
     "vue-cropper": "^0.6.5",
+    "vue-meta": "^2.4.0",
     "vue-router": "3.4.9"
   },
   "devDependencies": {
@@ -32,6 +33,7 @@
     "babel-eslint": "10.1.0",
     "eslint": "7.15.0",
     "eslint-plugin-vue": "7.2.0",
+    "prerender-spa-plugin": "^3.4.0",
     "sass": "1.32.13",
     "sass-loader": "10.1.1",
     "vue-template-compiler": "2.6.12"

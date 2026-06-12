@@ -132,8 +132,119 @@
           <ImageCarousel />
         </div>
 
-        <!-- SEO优化内容区域 - FAQ样式 -->
+        <!-- SEO 内容丰富化：How It Works / Who / Why -->
+        <div id="how-it-works" class="seo-content-section">
+          <h2>How It Works — Create a Book Mockup in 3 Steps</h2>
+          <p>
+            Our <a href="/free-book-mockup-generator"><strong>free book mockup generator</strong></a> turns your flat cover design into a realistic 3D book image in seconds. No Photoshop, no plugins, no signup — just upload and download. Here is how the process works:
+          </p>
+
+          <div class="steps-grid">
+            <div class="step-card">
+              <div class="step-icon">&#128228;</div>
+              <span class="step-number">1</span>
+              <h3>Upload Your Book Cover</h3>
+              <p>Click <strong>Add image/design</strong> and select your cover file in JPG or PNG format. For the sharpest result, use a high-resolution image that matches a standard book cover aspect ratio. The <strong>book mockup generator</strong> accepts any cover size and maps it onto the template automatically.</p>
+            </div>
+            <div class="step-card">
+              <div class="step-icon">&#127912;</div>
+              <span class="step-number">2</span>
+              <h3>Preview the Realistic Render</h3>
+              <p>Your cover appears instantly on the book with realistic page texture, shadows, and natural lighting. Toggle highlights and shadows on or off to match the look you want. What you see on screen is exactly what you will download — a professional <a href="/book-cover-mockup-generator"><strong>book cover mockup</strong></a> ready to publish.</p>
+            </div>
+            <div class="step-card">
+              <div class="step-icon">&#128229;</div>
+              <span class="step-number">3</span>
+              <h3>Download With No Watermark</h3>
+              <p>Choose JPG or PNG and download your finished <strong>book mockup</strong> in high resolution. The exported image is completely clean — no watermark, no logo, no branding. Come back anytime and create as many mockups as you like, totally free.</p>
+            </div>
+          </div>
+        </div>
+
         <div class="seo-content-section">
+          <h2>Who Uses Our Free Book Mockup Generator?</h2>
+          <p>
+            Whether you are a first-time author or a full-time design professional, a quality <strong>book mockup generator online free</strong> tool saves hours of Photoshop work and delivers results that look genuinely photographed.
+          </p>
+
+          <div class="audience-grid">
+            <div class="audience-card">
+              <div class="audience-icon">&#9997;&#65039;</div>
+              <h3>Self-Published Authors</h3>
+              <p>Create scroll-stopping promo images for your Amazon KDP launch, newsletter header, or social media announcement. A realistic <a href="/paperback-book-mockup"><strong>paperback book mockup</strong></a> makes your title look professional and trustworthy before readers even open the sample.</p>
+            </div>
+            <div class="audience-card">
+              <div class="audience-icon">&#127912;</div>
+              <h3>Cover Designers</h3>
+              <p>Present polished, real-world previews to clients instead of flat files. A <a href="/book-cover-mockup-generator"><strong>book cover mockup generator</strong></a> lets you show how the design reads on an actual book — with depth, lighting, and context that a 2D export cannot convey.</p>
+            </div>
+            <div class="audience-card">
+              <div class="audience-icon">&#128188;</div>
+              <h3>Publishers &amp; Marketing Teams</h3>
+              <p>Build consistent product imagery across your entire catalog without a photo studio. Generate high-resolution <a href="/hardcover-book-mockup"><strong>hardcover book mockups</strong></a> for press kits, catalogs, ads, and social campaigns in seconds.</p>
+            </div>
+            <div class="audience-card">
+              <div class="audience-icon">&#128722;</div>
+              <h3>Amazon KDP &amp; Print-on-Demand Sellers</h3>
+              <p>Stand out in search results with a realistic <a href="/3d-book-mockup-generator"><strong>3D book mockup</strong></a>. A professional product shot outperforms a flat cover thumbnail and helps your listing convert browsers into buyers.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="seo-content-section">
+          <h2>Why Use MyMockupBook?</h2>
+          <p>
+            There are dozens of <strong>book cover mockup</strong> tools online, but most are limited by watermarks, mandatory signups, or expensive subscriptions. Here is why thousands of authors and designers choose MyMockupBook:
+          </p>
+          <ul class="benefits-list">
+            <li><strong>100% Free, No Watermark</strong> — Your downloads are clean and publish-ready. We never stamp a logo or watermark on your image, so you can use it on Amazon, social media, or anywhere else without restrictions.</li>
+            <li><strong>No Signup Required</strong> — Start creating the moment the page loads. No email, no account, no credit card. Just upload your cover and download the result.</li>
+            <li><strong>Realistic 3D Rendering</strong> — Our WebGL engine places your cover on a real book with accurate perspective, page texture, natural lighting, and hands holding it. The result looks photographed, not pasted.</li>
+            <li><strong>Runs in Your Browser</strong> — No Photoshop, no PSD files, no plugins to install. The <strong>book mockup generator</strong> works on any device with a modern browser — Windows, Mac, tablet, or phone.</li>
+            <li><strong>High-Resolution JPG &amp; PNG Export</strong> — Download in the format you need. JPG for smaller file sizes, PNG for transparency support. Both are high-resolution and ready for web, social, and print-on-demand.</li>
+            <li><strong>Instant Preview</strong> — What you see is exactly what you download. No waiting, no processing queue, no surprises. Upload, preview, download — done.</li>
+          </ul>
+        </div>
+
+        <!-- 内链导航 -->
+        <div id="templates" class="seo-content-section internal-links-section">
+          <h2>Explore More Mockup Tools</h2>
+          <div class="internal-links-grid">
+            <a href="/free-book-mockup-generator" class="internal-link-card">
+              <span class="link-icon">&#128218;</span>
+              <span class="link-title">Free Book Mockup Generator</span>
+              <span class="link-desc">No watermark, no signup</span>
+            </a>
+            <a href="/book-cover-mockup-generator" class="internal-link-card">
+              <span class="link-icon">&#128214;</span>
+              <span class="link-title">Book Cover Mockup Generator</span>
+              <span class="link-desc">Photorealistic cover renders</span>
+            </a>
+            <a href="/ebook-mockup-generator" class="internal-link-card">
+              <span class="link-icon">&#128241;</span>
+              <span class="link-title">eBook Mockup Generator</span>
+              <span class="link-desc">For digital products &amp; lead magnets</span>
+            </a>
+            <a href="/hardcover-book-mockup" class="internal-link-card">
+              <span class="link-icon">&#128213;</span>
+              <span class="link-title">Hardcover Book Mockup</span>
+              <span class="link-desc">Premium bound editions</span>
+            </a>
+            <a href="/3d-book-mockup-generator" class="internal-link-card">
+              <span class="link-icon">&#127916;</span>
+              <span class="link-title">3D Book Mockup Generator</span>
+              <span class="link-desc">Depth, perspective &amp; lighting</span>
+            </a>
+            <a href="/paperback-book-mockup" class="internal-link-card">
+              <span class="link-icon">&#128211;</span>
+              <span class="link-title">Paperback Book Mockup</span>
+              <span class="link-desc">For KDP &amp; print-on-demand</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- FAQ -->
+        <div id="faq" class="seo-content-section">
           <h2>Frequently Asked Questions</h2>
           
           <div class="faq-item">
@@ -180,8 +291,35 @@
       </div>
     </div>
 
+    <!-- 持久页脚：多列内链 + 版权 -->
+    <footer class="site-footer">
+      <div class="footer-grid">
+        <nav class="footer-col" aria-label="Book mockup tools">
+          <h2 class="footer-heading">Mockup Tools</h2>
+          <ul>
+            <li><a href="/free-book-mockup-generator">Free Book Mockup Generator</a></li>
+            <li><a href="/book-cover-mockup-generator">Book Cover Mockup</a></li>
+            <li><a href="/ebook-mockup-generator">eBook Mockup</a></li>
+            <li><a href="/hardcover-book-mockup">Hardcover Mockup</a></li>
+            <li><a href="/3d-book-mockup-generator">3D Book Mockup</a></li>
+            <li><a href="/paperback-book-mockup">Paperback Mockup</a></li>
+          </ul>
+        </nav>
+        <nav class="footer-col" aria-label="Company">
+          <h2 class="footer-heading">Company</h2>
+          <ul>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+            <li><a href="/privacy">Privacy Policy</a></li>
+            <li><a href="/terms">Terms of Service</a></li>
+          </ul>
+        </nav>
+      </div>
+      <p class="footer-copy">© {{ year }} MyMockupBook — Free Book Mockup Generator. All rights reserved.</p>
+    </footer>
+
     <!-- 图片上传弹窗 -->
-    <ImageUploadModal 
+    <ImageUploadModal
       :visible="showImageModal"
       @close="closeImageModal"
       @confirm="handleModalConfirm"
@@ -205,41 +343,44 @@ export default {
     ImageUploadModal: () => import('@/components/ImageUploadModal.vue')
   },
   metaInfo: {
-    title: 'Free Book Mockup Generator Online | No Watermark - MyMockupBook',
+    title: 'Free Book Mockup Generator Online – No Watermark | Upload & Download',
     meta: [
+      { vmid: 'description', name: 'description', content: 'Free book mockup generator online — upload your book cover and create realistic mockups in seconds. No watermark, no signup. Book cover mockup generator, download in JPG and PNG.' },
+      { vmid: 'og:title', property: 'og:title', content: 'Free Book Mockup Generator Online | No Watermark' },
+      { vmid: 'og:description', property: 'og:description', content: 'Upload your cover and create realistic book mockups in seconds. Free, no watermark, no signup. Download in JPG and PNG.' },
+      { vmid: 'og:type', property: 'og:type', content: 'website' },
+      { vmid: 'og:url', property: 'og:url', content: 'https://www.mymockupbook.com/' },
+      { vmid: 'twitter:title', name: 'twitter:title', content: 'Free Book Mockup Generator Online | No Watermark' },
+      { vmid: 'twitter:description', name: 'twitter:description', content: 'Upload your cover and create realistic book mockups in seconds. Free, no watermark, no signup. Download in JPG and PNG.' }
+    ],
+    link: [
+      { rel: 'canonical', href: 'https://www.mymockupbook.com/' }
+    ],
+    script: [
       {
-        name: 'description',
-        content: 'Free online book mockup generator — upload your cover and create realistic 3D book mockups in seconds. No watermark, no signup. Download in JPG and PNG.'
+        vmid: 'ldjson-faq',
+        type: 'application/ld+json',
+        json: {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: [
+            { '@type': 'Question', name: 'Is it possible to add my logo or design to the Book mockup?', acceptedAnswer: { '@type': 'Answer', text: 'Absolutely. Select a template within the Book category and upload your design file, it will be placed automatically on the mockup book cover with perfect alignment.' } },
+            { '@type': 'Question', name: 'Do I need Photoshop to use these Book mockups?', acceptedAnswer: { '@type': 'Answer', text: 'No, you don\'t need Photoshop. Our book cover mockup online tool is web-based and works directly in your browser. Simply upload your design and download the result.' } },
+            { '@type': 'Question', name: 'Can I download the Book mockup in high resolution?', acceptedAnswer: { '@type': 'Answer', text: 'Yes, you can download your book mockup in JPG or PNG format in high resolution. Perfect for both digital and print use.' } },
+            { '@type': 'Question', name: 'Are the Book mockups suitable for commercial use?', acceptedAnswer: { '@type': 'Answer', text: 'Yes, all our book cover mockup free templates are suitable for commercial use. Perfect for authors, designers, and publishers.' } },
+            { '@type': 'Question', name: 'Can I edit the colors or textures of the Book mockup?', acceptedAnswer: { '@type': 'Answer', text: 'Yes, you can customize various aspects of your book cover mockup including colors, textures, and lighting effects to match your brand.' } },
+            { '@type': 'Question', name: 'How do I make sure my design fits perfectly in the Book mockup?', acceptedAnswer: { '@type': 'Answer', text: 'Our book mockup generator automatically adjusts your design to fit perfectly. For best results, use high-resolution images and follow our recommended dimensions.' } },
+            { '@type': 'Question', name: 'What file formats can I download my mockup in?', acceptedAnswer: { '@type': 'Answer', text: 'You can download your book cover mockup in JPG or PNG format. Both are high quality and ready for digital use, social media, and print-on-demand platforms.' } },
+            { '@type': 'Question', name: 'Is this book cover mockup generator really free?', acceptedAnswer: { '@type': 'Answer', text: 'Yes, our service is completely free to use. No registration required, no hidden fees, and no watermarks on your final mockups.' } },
+          ],
+        },
       },
-      {
-        name: 'keywords',
-        content: 'book mockup generator, free book mockup generator, book mockup generator online free, book cover mockup generator, book mockup online, book mockup generator no watermark'
-      },
-      {
-        property: 'og:title',
-        content: 'Free Book Mockup Generator Online | No Watermark'
-      },
-      {
-        property: 'og:description',
-        content: 'Upload your cover and create realistic book mockups in seconds. Free, no watermark, no signup. Download in JPG and PNG.'
-      },
-      {
-        property: 'og:type',
-        content: 'website'
-      },
-      {
-        name: 'twitter:title',
-        content: 'Free Book Mockup Generator Online | No Watermark'
-      },
-      {
-        name: 'twitter:description',
-        content: 'Upload your cover and create realistic book mockups in seconds. Free, no watermark, no signup. Download in JPG and PNG.'
-      },
-      {
-        rel: 'canonical',
-        href: 'https://www.mymockupbook.com/'
-      }
-    ]
+    ],
+  },
+  computed: {
+    year() {
+      return new Date().getFullYear();
+    }
   },
   data() {
     return {
@@ -280,10 +421,20 @@ export default {
     };
   },
   mounted() {
-    // 等待DOM完全渲染后再初始化 PIXI 渲染器并显示底图
     this.$nextTick(() => {
       setTimeout(() => {
-        this.initPixiRenderer();
+        this.initPixiRenderer().then(() => {
+          const pending = sessionStorage.getItem('pendingCover');
+          if (pending) {
+            sessionStorage.removeItem('pendingCover');
+            const img = new Image();
+            img.onload = () => {
+              this.userImage = img;
+              this.renderPixiMockup(img);
+            };
+            img.src = pending;
+          }
+        });
       }, 100);
     });
     window.addEventListener('resize', this.handleResize);
@@ -608,13 +759,14 @@ export default {
 .page-container {
   min-height: 100vh;
   background-color: #ffffff;
-  width: 100vw !important; /* 强制使用视口宽度 */
-  max-width: none !important; /* 移除任何最大宽度限制 */
+  width: 100% !important; /* 用 100% 避免 100vw 含滚动条导致横向溢出 */
+  max-width: 100% !important;
   margin: 0 !important;
   padding: 0 !important;
   position: relative;
   left: 0;
   right: 0;
+  overflow-x: hidden; /* 兜底：禁止横向滚动露出背景 */
   box-sizing: border-box;
 }
 
@@ -623,12 +775,12 @@ export default {
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;
-  width: 100vw !important; /* 强制使用视口宽度 */
-  max-width: none !important; /* 移除任何最大宽度限制 */
+  width: 100% !important;
+  max-width: 100% !important;
   z-index: 1000 !important;
   background-color: #ffffff !important;
   border: none !important;
-  box-shadow: none !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important;
   border-radius: 0 !important;
   box-sizing: border-box;
 }
@@ -638,7 +790,7 @@ export default {
   width: 100%;
   margin: 0;
   padding: 0;
-  padding-top: 0; /* 移除顶部间距，避免多余的白色区域 */
+  padding-top: 56px; /* Header 高度 */
 }
 
 /* 移除所有容器样式，直接在全屏背景上布局 */
@@ -692,6 +844,183 @@ export default {
   margin-bottom: 2rem;
   line-height: 1.3;
   text-align: center;
+}
+
+.seo-content-section > p {
+  color: #555;
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.step-number {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+  text-align: center;
+  background: #3b82f6;
+  color: #fff;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.step-card h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.6rem;
+}
+
+.step-card p {
+  color: #555;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.audience-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.audience-card h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.6rem;
+}
+
+.audience-card p {
+  color: #555;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.benefits-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.benefits-list li {
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.75rem;
+  background: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #555;
+}
+
+.benefits-list li strong {
+  color: #2c3e50;
+}
+
+.step-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.audience-icon {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.audience-card {
+  background: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.audience-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+
+.step-card {
+  background: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 1.5rem;
+  position: relative;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.step-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+
+.internal-links-section {
+  background: #f0f7ff !important;
+  border-color: #d4e6f9 !important;
+}
+
+.internal-links-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.internal-link-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1.25rem 1rem;
+  background: #ffffff;
+  border: 1px solid #d4e6f9;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.internal-link-card:hover {
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+  transform: translateY(-2px);
+}
+
+.link-icon {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.link-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #1f2937;
+  margin-bottom: 0.3rem;
+}
+
+.link-desc {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.seo-content-section a {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.seo-content-section a:hover {
+  text-decoration: underline;
 }
 
 .faq-item {
@@ -749,8 +1078,7 @@ export default {
 
 /* 功能区域内容容器 */
 .function-section > * {
-  max-width: 1200px; /* 限制内容最大宽度，与标题区域保持一致 */
-  width: 100%;
+  max-width: none;
 }
 
 /* 左右面板直接在全屏背景上 */
@@ -1025,51 +1353,124 @@ canvas {
   }
   
   .mockup-tool-container {
-    padding-top: 5rem; /* 移动端减少顶部间距 */
+    padding-top: 0;
   }
-  
+
   .header-section {
-    padding: 0 3rem; /* 移动端减少左右边距 */
+    padding: 0 1rem;
   }
-  
+
   .function-section {
-    padding: 0 3rem 2rem 3rem; /* 移动端减少左右边距 */
+    padding: 1rem;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1rem;
   }
-  
+
   .unified-content-container {
     flex-direction: column;
-    padding: 1.5rem;
+    padding: 0;
   }
-  
+
   .vertical-divider {
     width: 100%;
     height: 1px;
     margin: 1.5rem 0;
   }
-  
+
   .control-panel,
   .result-panel {
-    max-width: 100%;
+    max-width: 100% !important;
+    width: 100% !important;
   }
-  
+
   .seo-content-section {
-    margin-left: 3rem;
-    margin-right: 3rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
     padding: 1.5rem;
   }
-  
+
   .seo-content-section h2 {
     font-size: 1.5rem;
   }
-  
+
+  .more-like-this-section {
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .steps-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .audience-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .internal-links-grid {
+    grid-template-columns: 1fr;
+  }
+
   .faq-item {
     padding: 1rem;
   }
-  
+
   .faq-item h3 {
     font-size: 1rem;
+  }
+}
+
+/* 持久页脚 */
+.site-footer {
+  border-top: 1px solid #e9ecef;
+  padding: 2.5rem 2rem;
+  background: #ffffff;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.footer-grid {
+  display: flex;
+  gap: 4rem;
+  margin-bottom: 2rem;
+}
+.footer-col ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.footer-col li {
+  margin-bottom: 0.5rem;
+}
+.footer-col a {
+  color: #374151;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.footer-col a:hover {
+  color: #3b82f6;
+  text-decoration: underline;
+}
+.footer-heading {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #111827;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.75rem;
+}
+.footer-copy {
+  font-size: 0.82rem;
+  color: #9ca3af;
+  margin: 0;
+}
+@media (max-width: 768px) {
+  .site-footer {
+    padding: 2rem 1rem;
+  }
+  .footer-grid {
+    flex-direction: column;
+    gap: 2rem;
   }
 }
 </style>
