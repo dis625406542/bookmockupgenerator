@@ -39,6 +39,7 @@ module.exports = {
           renderer: new Renderer({
             headless: true,
             renderAfterTime: 3000,
+            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
           }),
         })
       )
