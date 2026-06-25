@@ -25,8 +25,18 @@ export default function MockupTool({
   const [format, setFormat] = useState<"PNG" | "JPEG">("PNG");
   const [showModal, setShowModal] = useState(false);
   const [hasCover, setHasCover] = useState(false);
+  const [highlights, setHighlights] = useState(true);
+  const [coverEnabled, setCoverEnabled] = useState(true);
+  const [imageSize, setImageSize] = useState<string>("");
 
   const handleConfirm = async (dataURL: string) => {
+    // 获取图片尺寸
+    const img = new Image();
+    img.onload = () => {
+      setImageSize(`${img.width}x${img.height}px`);
+    };
+    img.src = dataURL;
+
     await canvasRef.current?.renderCover(dataURL);
     setHasCover(true);
     toast.success("Cover applied to the book mockup");
@@ -46,7 +56,7 @@ export default function MockupTool({
     <div className="flex flex-col lg:flex-row gap-4 justify-center px-2 lg:px-6 py-4">
       {/* 左侧：Canvas + Info Panel */}
       <div className="flex-1 max-w-[580px]">
-        <PixiCanvas ref={canvasRef} highlights={true} template={template} />
+        <PixiCanvas ref={canvasRef} highlights={highlights} coverEnabled={coverEnabled} template={template} />
         <button
           onClick={() => setShowModal(true)}
           className="w-full mt-4 flex items-center justify-center gap-2 bg-brand hover:bg-brand-dark text-white font-bold py-3 px-4 rounded-lg transition-colors"
@@ -83,6 +93,12 @@ export default function MockupTool({
           format={format}
           onFormatChange={setFormat}
           onDownload={handleDownload}
+          highlights={highlights}
+          onHighlightsChange={setHighlights}
+          coverEnabled={coverEnabled}
+          onCoverEnabledChange={setCoverEnabled}
+          imageSize={imageSize}
+          hasCover={hasCover}
         />
       </div>
 

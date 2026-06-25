@@ -25,6 +25,7 @@ export interface SceneTextures {
 
 export interface DrawOptions {
   highlights: boolean;
+  coverEnabled?: boolean;
 }
 
 // 模板定义：所有模板共用素材（底图+mask+高光），仅 destPoints 不同。
@@ -328,7 +329,7 @@ export function drawPixiScene(
   bgSprite.height = bgH;
   stage.addChild(bgSprite);
 
-  if (!coverTex) return;
+  if (!coverTex || opts.coverEnabled === false) return;
 
   // 封面四边形：scale = W/template.width，不叠加背景偏移。
   const scale = W / template.width;

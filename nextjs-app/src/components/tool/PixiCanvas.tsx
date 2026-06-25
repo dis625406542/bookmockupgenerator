@@ -19,21 +19,24 @@ export interface PixiCanvasRef {
 
 interface PixiCanvasProps {
   highlights: boolean;
+  coverEnabled: boolean;
   template?: Template;
   onReady?: () => void;
 }
 
 const PixiCanvas = forwardRef<PixiCanvasRef, PixiCanvasProps>(
-  ({ highlights, template = CHILD_BOOK_TEMPLATE, onReady }, ref) => {
+  ({ highlights, coverEnabled, template = CHILD_BOOK_TEMPLATE, onReady }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const appRef = useRef<PIXI.Application | null>(null);
     const texRef = useRef<SceneTextures | null>(null);
     const coverTexRef = useRef<PIXI.Texture | null>(null);
     const highlightsRef = useRef(highlights);
+    const coverEnabledRef = useRef(coverEnabled);
     const templateRef = useRef(template);
 
     // 同步 props 到 ref
     highlightsRef.current = highlights;
+    coverEnabledRef.current = coverEnabled;
     templateRef.current = template;
 
     // 初始化 PIXI，加载固定纹理，显示底图
@@ -65,6 +68,7 @@ const PixiCanvas = forwardRef<PixiCanvasRef, PixiCanvasProps>(
         // 初始只显示底图（无封面）
         drawPixiScene(app, tex, tt, null, {
           highlights: highlightsRef.current,
+          coverEnabled: coverEnabledRef.current,
         });
 
         if (onReady) onReady();
@@ -83,14 +87,17 @@ const PixiCanvas = forwardRef<PixiCanvasRef, PixiCanvasProps>(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // highlights 变化时重绘
+    // highlights 或 coverEnabled 变化时重绘
     useEffect(() => {
       const app = appRef.current;
       const tex = texRef.current;
       const coverTex = coverTexRef.current;
       if (!app || !tex) return;
-      drawPixiScene(app, tex, templateRef.current, coverTex, { highlights });
-    }, [highlights]);
+      drawPixiScene(app, tex, templateRef.current, coverTex, {
+        highlights,
+        coverEnabled,
+      });
+    }, [highlights, coverEnabled]);
 
     // 暴露方法给父组件：渲染封面、获取 canvas
     useImperativeHandle(ref, () => ({
@@ -103,6 +110,7 @@ const PixiCanvas = forwardRef<PixiCanvasRef, PixiCanvasProps>(
         coverTexRef.current = coverTex;
         drawPixiScene(app, tex, templateRef.current, coverTex, {
           highlights: highlightsRef.current,
+          coverEnabled: coverEnabledRef.current,
         });
       },
       getCanvas() {

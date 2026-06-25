@@ -5,6 +5,12 @@ interface ControlPanelProps {
   onFormatChange: (format: "PNG" | "JPEG") => void;
   onDownload: () => void;
   disabled?: boolean;
+  highlights: boolean;
+  onHighlightsChange: (value: boolean) => void;
+  coverEnabled: boolean;
+  onCoverEnabledChange: (value: boolean) => void;
+  imageSize: string;
+  hasCover: boolean;
 }
 
 export default function ControlPanel({
@@ -12,6 +18,12 @@ export default function ControlPanel({
   onFormatChange,
   onDownload,
   disabled = false,
+  highlights,
+  onHighlightsChange,
+  coverEnabled,
+  onCoverEnabledChange,
+  imageSize,
+  hasCover,
 }: ControlPanelProps) {
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-4 space-y-4">
@@ -59,6 +71,60 @@ export default function ControlPanel({
       >
         Download
       </button>
+
+      {/* Divider */}
+      <div className="border-t border-gray-200 my-3"></div>
+
+      {/* Highlights toggle */}
+      <div className="flex items-center justify-between">
+        <span className="text-sm font-medium text-gray-700">Highlights</span>
+        <label className="relative inline-flex items-center cursor-pointer">
+          <input
+            type="checkbox"
+            checked={highlights}
+            onChange={(e) => onHighlightsChange(e.target.checked)}
+            className="sr-only peer"
+          />
+          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-brand rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand"></div>
+        </label>
+      </div>
+
+      {/* Shadows toggle (placeholder, not implemented in renderer yet) */}
+      <div className="flex items-center justify-between opacity-50">
+        <span className="text-sm font-medium text-gray-700">Shadows</span>
+        <label className="relative inline-flex items-center cursor-not-allowed">
+          <input
+            type="checkbox"
+            checked={true}
+            disabled
+            className="sr-only peer"
+          />
+          <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-brand"></div>
+        </label>
+      </div>
+
+      {/* Divider */}
+      <div className="border-t border-gray-200 my-3"></div>
+
+      {/* Your image toggle */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium text-gray-700">Your image:</span>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={coverEnabled}
+              onChange={(e) => onCoverEnabledChange(e.target.checked)}
+              disabled={!hasCover}
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-brand rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand peer-disabled:opacity-50 peer-disabled:cursor-not-allowed"></div>
+          </label>
+        </div>
+        {imageSize && (
+          <span className="text-xs text-gray-500">{imageSize}</span>
+        )}
+      </div>
     </div>
   );
 }
