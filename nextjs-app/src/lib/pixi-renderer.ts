@@ -81,10 +81,10 @@ export const EBOOK_TEMPLATE: Template = {
   height: 600,
   ...ASSETS,
   destPoints: [
-    { x: 290, y: 100 },
-    { x: 510, y: 100 },
-    { x: 510, y: 530 },
-    { x: 290, y: 535 },
+    { x: 252, y: 134 },
+    { x: 548, y: 134 },
+    { x: 548, y: 501 },
+    { x: 248, y: 503 },
   ],
 };
 
@@ -94,10 +94,10 @@ export const THREE_D_TEMPLATE: Template = {
   height: 600,
   ...ASSETS,
   destPoints: [
-    { x: 230, y: 144 },
-    { x: 560, y: 120 },
-    { x: 570, y: 490 },
-    { x: 240, y: 510 },
+    { x: 252, y: 134 },
+    { x: 548, y: 134 },
+    { x: 548, y: 501 },
+    { x: 248, y: 503 },
   ],
 };
 
