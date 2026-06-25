@@ -132,7 +132,7 @@ export const TEMPLATE_MAP: Record<string, Template> = {
   hardcover: HARDCOVER_TEMPLATE,
   paperback: PAPERBACK_TEMPLATE,
   ebook: EBOOK_TEMPLATE,
-  "3d": THREE_D_TEMPLATE,
+  "3d-book": THREE_D_TEMPLATE,
   "book-cover": BOOK_COVER_TEMPLATE,
   "free-book": FREE_BOOK_TEMPLATE,
 };
