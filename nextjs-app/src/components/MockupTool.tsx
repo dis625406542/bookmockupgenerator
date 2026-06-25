@@ -30,7 +30,6 @@ export default function MockupTool({
   const [imageSize, setImageSize] = useState<string>("");
 
   const handleConfirm = async (dataURL: string) => {
-    // 获取图片尺寸
     const img = new Image();
     img.onload = () => {
       setImageSize(`${img.width}x${img.height}px`);
@@ -39,7 +38,6 @@ export default function MockupTool({
 
     await canvasRef.current?.renderCover(dataURL);
     setHasCover(true);
-    toast.success("Cover applied to the book mockup");
   };
 
   const handleDownload = () => {
