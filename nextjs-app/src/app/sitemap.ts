@@ -11,6 +11,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/hardcover-book-mockup",
     "/3d-book-mockup-generator",
     "/paperback-book-mockup",
+    "/privacy-policy",
+    "/terms-of-service",
+    "/contact",
   ];
 
   return routes.map((route) => ({
