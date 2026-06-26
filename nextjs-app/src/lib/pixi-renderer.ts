@@ -68,10 +68,10 @@ export const PAPERBACK_TEMPLATE: Template = {
   height: 600,
   ...ASSETS,
   destPoints: [
-    { x: 270, y: 152 },
-    { x: 530, y: 152 },
-    { x: 530, y: 483 },
-    { x: 270, y: 485 },
+    { x: 252, y: 134 },
+    { x: 548, y: 134 },
+    { x: 548, y: 501 },
+    { x: 248, y: 503 },
   ],
 };
 
@@ -107,10 +107,10 @@ export const BOOK_COVER_TEMPLATE: Template = {
   height: 600,
   ...ASSETS,
   destPoints: [
-    { x: 260, y: 140 },
-    { x: 540, y: 140 },
-    { x: 540, y: 495 },
-    { x: 260, y: 497 },
+    { x: 252, y: 134 },
+    { x: 548, y: 134 },
+    { x: 548, y: 501 },
+    { x: 248, y: 503 },
   ],
 };
 
