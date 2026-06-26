@@ -6,7 +6,7 @@ const SITE_URL = "https://www.mymockupbook.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Free Book Mockup Generator Online | MyMockupBook",
+  title: "Free Book Mockup Generator - No Watermark | MyMockupBook",
   description:
     "Free book mockup generator. Upload your book cover and create a realistic 3D book mockup online in seconds. No watermark, no signup, download in JPG and PNG.",
   openGraph: {
