@@ -18,22 +18,23 @@
 目标用户：英文用户（自出版作者、设计师），美国为主。
 
 ## 技术栈
-- **Vue 2.6 + vue-cli 4 + vue-router**（history 模式），纯 SPA
-- Element UI 2.15、vue-cropper、axios
-- 代码在 `web-ui/` 子目录，不是仓库根
-- `npm run dev` 本地、`npm run build` 构建、`npm run lint`
+- **Next.js 14.2 + React + TypeScript**（SSG 静态生成）
+- 主站在 `nextjs-app/` 子目录
+- Tailwind CSS、PIXI.js v5（WebGL 渲染）、vue-cropper
+- `npm run dev` 本地（3000端口）、`npm run build` 构建、`npm run lint`
+- 旧 Vue 2.6 SPA 在 `web-ui/` 保留作参考，已弃用
 
-## 核心渲染逻辑：PIXI.js v5 WebGL（2026-06 重写，已替代旧 Canvas2D）
+## 核心渲染逻辑：PIXI.js v5 WebGL（2026-06 重写）
 
-渲染全部在 `web-ui/src/views/Home.vue` 的 PIXI 方法里，**算法与模板无关**，换书本模型时这些方法一行都不用动：
-- `initPixiRenderer()` — 建 `PIXI.Application`（`backgroundAlpha:0`、`preserveDrawingBuffer:true` 否则 toDataURL 下载空白），预加载三张固定纹理。
-- `drawPixiScene(coverTex)` — 组装场景：背景 Sprite(contain 居中) → 封面 Mesh(网格变形+mask 抠图) → highlights Sprite(拉进封面 bbox，普通 alpha 混合)。
-- `buildQuadGeometry(quad)` — seg=20 双线性细分四边形，destPoints 四角 → 网格顶点。
+渲染核心在 `nextjs-app/src/lib/pixi-renderer.ts` 和 `nextjs-app/src/components/tool/PixiCanvas.tsx`。**算法与模板无关**，换书本模型时这些文件不用动：
+- `initPixiApp()` — 建 `PIXI.Application`（`backgroundAlpha:0`、`preserveDrawingBuffer:true` 否则 toDataURL 下载空白），预加载三张固定纹理。
+- `drawPixiScene()` — 组装场景：背景 Sprite(contain 居中) → 封面 Mesh(网格变形+mask 抠图) → highlights Sprite(拉进封面 bbox，普通 alpha 混合)。
+- `buildQuadGeometry()` — seg=20 双线性细分四边形，destPoints 四角 → 网格顶点。
 - `buildCoverMesh()` — 自定义 GLSL shader：`a = cover.a * mask.a`，输出预乘 alpha。mask 白区(a=1)显示封面、透明区(a=0)漏出底图真实手指，GPU 双线性采样天然羽化、消白边。
 
 **坐标系铁律（踩过坑，别再错）**：封面 quad 用 `scale = canvasWidth / template.width`，**绝不叠加背景的 bgX/bgY 偏移**。destPoints 是在这个无偏移坐标系下手调的，加偏移必错位。highlights 拉进封面 bbox + 普通 alpha 混合（不是 SCREEN、不是全画布）。
 
-旧的 `imageProcessor.js`（2倍重采样+白色阈值240像素覆盖）已弃用，仅留作参考，不要再走那条路。
+旧 Vue 实现在 `web-ui/src/views/Home.vue`，已弃用仅作参考。
 
 ## 换新书本模型的标准改造流程
 算法通用，但**不是只换底图+坐标**。每个新模型需一套**配套素材 + 一组坐标**：
@@ -51,16 +52,19 @@ destPoints 微调口诀：x=水平(大=右)、y=垂直(大=下，往上就减小
 2. `drawPixiScene` 读 `this.currentTemplate` 取素材和坐标。
 3. 可选：把调 destPoints 做成画布上拖拽 4 个角点，省去改数字刷新的来回。
 
-## SEO 现状与诊断（2026-06 据 GSC + SEMrush）
-- **根因**：纯 SPA 客户端渲染 + 全站只有首页 1 个真实页面（路由里 home1/home2/home3 是开发残版，coordinate-picker 是调试工具）。
-- GSC：3个月仅首页有曝光，总曝光317/点击3，平均排名约75（第7-8页）。
-- 真实有曝光的词：book mockup generator(155)、free book mockup generator(45)、book cover mockup generator、book mockup online。
-- niche 有量：`book mockup` 美国 3.6K / 全球 38.5K，KD 36。低 KD 长尾词总量约 4220/月。
-- 规划：阶段一零风险修复 SEO meta/sitemap；阶段二（验证后）Next.js 重做铺落地页矩阵。
+## SEO 现状与架构（2026-06 完成改造）
+- **改造前根因**：纯 Vue SPA 客户端渲染 + 全站只有首页 1 个真实页面。
+- **改造后架构**：Next.js 14 SSG，7 个静态落地页矩阵（首页 + 6 个关键词页面）。
+- 关键词页面：hardcover-book-mockup, paperback-book-mockup, ebook-mockup-generator, 3d-book-mockup-generator, book-cover-mockup-generator, free-book-mockup-generator。
+- 每页 800-1000 词差异化内容，避免模板页判定。
+- 法律页面已完备：/privacy-policy, /terms-of-service, /contact（Google Ads 必需）。
+- niche 有真实量：`book mockup` 美国 3.6K/全球 38.5K，KD 36。低 KD 长尾词总量约 4220/月。
 
 ## 已知待办 / 注意
 - 工具下载格式仅 JPEG/PNG（无 PSD），文案不要承诺 PSD。
 - 首页 URL `/` 不可改、不可删（已被收录，保住收录）。
+- 控制面板功能：Highlights 开关（书页纹理）、Your image 开关（显隐封面）、Shadows 占位（未实现）。
+- 7 个模板共用素材（book-background1.jpg/mask1.png/highlights1.png），仅 destPoints 不同。
 
 ## 开发规范（踩坑教训，务必遵守）
 

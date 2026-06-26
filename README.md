@@ -1,37 +1,60 @@
-# book-mockup-generator
+# MyMockupBook — Free Book Mockup Generator
 
-#### 介绍
-书本模型生成器
+在线图书封面 mockup 生成器，支持上传封面图并渲染到逼真的书本模板。
 
-#### 软件架构
-软件架构说明
+🌐 **线上站点**：https://www.mymockupbook.com/
 
+## 技术栈
 
-#### 安装教程
+- **Next.js 14.2** + React + TypeScript（SSG 静态生成）
+- **PIXI.js v5** WebGL 渲染（封面网格变形 + mask 抠图）
+- Tailwind CSS + vue-cropper
+- 7 个静态落地页矩阵（SEO 优化）
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+## 快速开始
 
-#### 使用说明
+```bash
+cd nextjs-app
+npm install
+npm run dev    # 本地开发 http://localhost:3000
+npm run build  # 生产构建
+npm run lint   # 代码检查
+```
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+## 项目结构
 
-#### 参与贡献
+```
+├── nextjs-app/          # Next.js 主站（当前版本）
+│   ├── src/
+│   │   ├── app/        # 页面路由
+│   │   ├── components/ # React 组件
+│   │   └── lib/        # PIXI 渲染核心
+│   └── public/
+│       └── templates/  # 书本素材（背景/mask/高光）
+└── web-ui/             # 旧 Vue 2.6 SPA（已弃用，保留作参考）
+```
 
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+## 核心特性
 
+- **7 种书本模板**：hardcover、paperback、ebook、3d-book、book-cover、free-book、child-book
+- **WebGL 高性能渲染**：PIXI.js 网格变形 + GPU shader mask 抠图
+- **无水印下载**：支持 JPG/PNG 格式
+- **SEO 优化**：800-1000 词差异化落地页内容
+- **隐私优先**：封面图本地渲染，不上传服务器
 
-#### 特技
+## 开发规范
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+详见 [CLAUDE.md](CLAUDE.md) 开发规范章节，包括：
+- 代码提交前强制 checklist
+- 模板坐标管理铁律（宽高比 1:1.2~1.3）
+- 多落地页验证流程
+
+## 联系方式
+
+- 官网：https://www.mymockupbook.com/
+- Contact：https://www.mymockupbook.com/contact
+- Email: support@mymockupbook.com
+
+## License
+
+MIT

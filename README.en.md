@@ -1,36 +1,60 @@
-# book-mockup-generator
+# MyMockupBook — Free Book Mockup Generator
 
-#### Description
-书本模型生成器
+Online book cover mockup generator. Upload your cover and render it onto realistic book templates.
 
-#### Software Architecture
-Software architecture description
+🌐 **Live Site**: https://www.mymockupbook.com/
 
-#### Installation
+## Tech Stack
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+- **Next.js 14.2** + React + TypeScript (SSG)
+- **PIXI.js v5** WebGL rendering (mesh deformation + mask compositing)
+- Tailwind CSS + vue-cropper
+- 7 static landing pages (SEO optimized)
 
-#### Instructions
+## Quick Start
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+```bash
+cd nextjs-app
+npm install
+npm run dev    # Local dev at http://localhost:3000
+npm run build  # Production build
+npm run lint   # Code linting
+```
 
-#### Contribution
+## Project Structure
 
-1.  Fork the repository
-2.  Create Feat_xxx branch
-3.  Commit your code
-4.  Create Pull Request
+```
+├── nextjs-app/          # Next.js main site (current version)
+│   ├── src/
+│   │   ├── app/        # Page routes
+│   │   ├── components/ # React components
+│   │   └── lib/        # PIXI rendering core
+│   └── public/
+│       └── templates/  # Book assets (background/mask/highlights)
+└── web-ui/             # Old Vue 2.6 SPA (deprecated, kept for reference)
+```
 
+## Core Features
 
-#### Gitee Feature
+- **7 Book Templates**: hardcover, paperback, ebook, 3d-book, book-cover, free-book, child-book
+- **High-Performance WebGL Rendering**: PIXI.js mesh deformation + GPU shader mask compositing
+- **Watermark-Free Download**: JPG/PNG formats
+- **SEO Optimized**: 800-1000 word differentiated landing pages
+- **Privacy First**: Client-side rendering, no server upload
 
-1.  You can use Readme\_XXX.md to support different languages, such as Readme\_en.md, Readme\_zh.md
-2.  Gitee blog [blog.gitee.com](https://blog.gitee.com)
-3.  Explore open source project [https://gitee.com/explore](https://gitee.com/explore)
-4.  The most valuable open source project [GVP](https://gitee.com/gvp)
-5.  The manual of Gitee [https://gitee.com/help](https://gitee.com/help)
-6.  The most popular members  [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+## Development Guidelines
+
+See [CLAUDE.md](CLAUDE.md) development guidelines, including:
+- Pre-commit checklist
+- Template coordinate management (aspect ratio 1:1.2~1.3)
+- Multi-landing-page validation workflow
+
+## Contact
+
+- Website: https://www.mymockupbook.com/
+- Contact: https://www.mymockupbook.com/contact
+- Email: support@mymockupbook.com
+
+## License
+
+MIT
