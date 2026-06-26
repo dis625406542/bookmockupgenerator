@@ -1,6 +1,7 @@
 import Header from "./Header";
 import Footer from "./Footer";
 import Link from "next/link";
+import RelatedTools from "./RelatedTools";
 
 interface LandingLayoutProps {
   h1: string;
@@ -14,7 +15,7 @@ interface LandingLayoutProps {
 export default function LandingLayout({
   h1,
   subtitle,
-  currentPath: _currentPath,
+  currentPath,
   showTool = true,
   ctaTitle = "Ready to design your book mockup?",
   children,
@@ -65,6 +66,9 @@ export default function LandingLayout({
             Create Your Mockup Now →
           </Link>
         </section>
+
+        {/* 相关工具推荐 */}
+        <RelatedTools currentPath={currentPath} />
       </main>
 
       <Footer />
